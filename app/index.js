@@ -1,51 +1,17 @@
+import { AppRegistry } from 'react-native';
 import React, { Component } from 'react';
-import { Navigator, NativeModules, StatusBar, View } from 'react-native';
-import { COLOR, ThemeProvider } from 'react-native-material-ui';
-import routes from './shared/routes';
-import Container from './containers/container.js';
 
-const UIManager = NativeModules.UIManager;
+import App from './App';
 
-const uiTheme = {
-    palette: {
-        primaryColor: COLOR.green500,
-        accentColor: COLOR.pink500,
-    },
-};
 
-class App extends Component {
-    static configureScene(route) {
-        return route.animationType || Navigator.SceneConfigs.FloatFromRight;
-    }
-    static renderScene(route, navigator) {
-        return (
-                <Container>
-                <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
-                <View style={{ backgroundColor: COLOR.green500, height: 24 }} />
-                <route.Page
-                route={route}
-                navigator={navigator}
-                />
-                </Container>
-               );
-    }
-    componentWillMount() {
-        if (UIManager.setLayoutAnimationEnabledExperimental) {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
+export default function index() {
+    class Root extends Component {
+        render() {
+            return (
+                    <App />
+                   );
         }
     }
-    render() {
-        return (
-                <ThemeProvider uiTheme={uiTheme}>
-                <Navigator
-                configureScene={App.configureScene}
-                initialRoute={routes.home}
-                ref={this.onNavigatorRef}
-                renderScene={App.renderScene}
-                />
-                </ThemeProvider>
-               );
-    }
-}
 
-export default App;
+    AppRegistry.registerComponent('BudgetQT', () => Root);
+}
