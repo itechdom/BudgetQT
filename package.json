@@ -11,7 +11,9 @@
     "mobx-react": "^4.1.0",
     "ramda": "^0.23.0",
     "react": "15.4.1",
-    "react-native": "0.39.2"
+    "react-native": "0.39.2",
+    "react-native-material-kit": "^0.4.1",
+    "react-native-router": "^0.2.1"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
