@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Navigator, NativeModules, StatusBar, View } from 'react-native';
-import { COLOR, ThemeProvider } from 'react-native-material-ui';
-import routes from './shared/routes';
-import Container from './containers/container.js';
 
-//connect Mobx here
+import { COLOR, ThemeProvider } from 'react-native-material-ui';
+import routes from '../routes';
+import Container from '../Container';
 
 const UIManager = NativeModules.UIManager;
 
@@ -21,15 +20,15 @@ class App extends Component {
     }
     static renderScene(route, navigator) {
         return (
-                <Container>
+            <Container>
                 <StatusBar backgroundColor="rgba(0, 0, 0, 0.2)" translucent />
                 <View style={{ backgroundColor: COLOR.green500, height: 24 }} />
                 <route.Page
-                route={route}
-                navigator={navigator}
+                    route={route}
+                    navigator={navigator}
                 />
-                </Container>
-               );
+            </Container>
+        );
     }
     componentWillMount() {
         if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -38,15 +37,15 @@ class App extends Component {
     }
     render() {
         return (
-                <ThemeProvider uiTheme={uiTheme}>
+            <ThemeProvider uiTheme={uiTheme}>
                 <Navigator
-                configureScene={App.configureScene}
-                initialRoute={routes.home}
-                ref={this.onNavigatorRef}
-                renderScene={App.renderScene}
+                    configureScene={App.configureScene}
+                    initialRoute={routes.home}
+                    ref={this.onNavigatorRef}
+                    renderScene={App.renderScene}
                 />
-                </ThemeProvider>
-               );
+            </ThemeProvider>
+        );
     }
 }
 
