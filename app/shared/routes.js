@@ -1,10 +1,10 @@
-import Home from '../views/home/home.js'; 
-import DailyBudget from '../views/daily-budget/daily-budget.js'; 
-import Friends from '../views/friends/friends.js'; 
-import Progress from '../views/progress/progress.js'; 
+import Home from '../views/Home'; 
+import DailyBudget from '../views/DailyBudget'; 
+import Friends from '../views/Friends'; 
+import Progress from '../views/Progress'; 
 
 export default {
-    home: {
+    Home: {
         title: 'Home',
         Page: Home,
     },
@@ -12,7 +12,7 @@ export default {
         title: 'Daily Budget',
         Page: DailyBudget,
     },
-    friends: {
+    Friends: {
         title: 'Friends',
         Page: Friends,
     },
