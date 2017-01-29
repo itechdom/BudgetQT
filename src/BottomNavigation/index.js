@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { View, Text } from 'react-native';
 import Container from '../Container';
 
-import { Toolbar, BottomNavigation, Icon } from '../react-native-material-ui';
+import { Toolbar, BottomNavigation, Icon } from 'react-native-material-ui';
 
 const propTypes = {
     navigator: PropTypes.object.isRequired,

@@ -11,7 +11,7 @@ import {
     ListItem,
     Toolbar,
     BottomNavigation,
-} from '../react-native-material-ui/src';
+} from 'react-native-material-ui';
 
 const UP = 1;
 const DOWN = -1;

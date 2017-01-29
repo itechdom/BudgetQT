@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text } from 'react-native';
 import React, { Component, PropTypes } from 'react';
 
-import { Dialog, DialogDefaultActions, Toolbar } from '../react-native-material-ui';
+import { Dialog, DialogDefaultActions, Toolbar } from 'react-native-material-ui';
 import Container from '../Container';
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import React, { Component, PropTypes } from 'react';
 
-import { Button, Subheader, Toolbar } from '../react-native-material-ui';
+import { Button, Subheader, Toolbar } from 'react-native-material-ui';
 import Container from '../Container';
 
 const styles = StyleSheet.create({

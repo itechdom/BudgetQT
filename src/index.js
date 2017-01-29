@@ -13,5 +13,5 @@ export default function index() {
         }
     }
 
-    AppRegistry.registerComponent('example', () => Root);
+    AppRegistry.registerComponent('BudgetQT', () => Root);
 }

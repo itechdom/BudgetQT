@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import React, { Component, PropTypes } from 'react';
 
-import { ListItem, Toolbar } from '../react-native-material-ui';
+import { ListItem, Toolbar } from 'react-native-material-ui';
 
 import routes from '../routes';
 

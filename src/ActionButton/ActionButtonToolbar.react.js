@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Container from '../Container';
 
-import { ActionButton, Toolbar } from '../react-native-material-ui';
+import { ActionButton, Toolbar } from 'react-native-material-ui';
 
 const propTypes = {
     navigator: PropTypes.object.isRequired,
