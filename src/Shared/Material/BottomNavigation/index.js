@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { View, Text } from 'react-native';
-import Container from '../Container';
+import Container from 'src/Container';
 
 import { Toolbar, BottomNavigation, Icon } from 'react-native-material-ui';
 

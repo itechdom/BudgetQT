@@ -1,3 +1,10 @@
 {
-"presets": ["react-native"]
+    "presets": ["react-native"],
+    "plugins": [
+        ["module-alias", [
+        { "src": "./src/Utils", "expose": "utils" },
+        { "src": "./src", "expose": "src" },
+        { "src": "npm:lodash", "expose": "underscore" }
+        ]]
+    ]
 }

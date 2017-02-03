@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 
 import { ListItem, Toolbar } from 'react-native-material-ui';
 
-import routes from '../routes';
+import routes from 'src/routes';
 
 const styles = StyleSheet.create({
     container: {
