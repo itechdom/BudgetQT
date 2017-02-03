@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { ToastAndroid, ScrollView, Platform, Animated, Easing } from 'react-native';
 
-import routes from '../routes';
+import routes from 'src/routes';
 
-import Container from '../Container';
+import Container from 'src/Container';
 // components
 import {
     ActionButton,

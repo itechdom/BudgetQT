@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import Container from '../Container';
+import Container from 'src/Container';
 
 import { ActionButton, Toolbar } from 'react-native-material-ui';
 
@@ -22,7 +22,7 @@ class ActionButtonSpec extends Component {
                     icon="share"
                     transition="speedDial"
                 />
-            </Container>
+           </Container>
         );
     }
 }
