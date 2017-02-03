@@ -13,10 +13,10 @@ const styles = StyleSheet.create({
 class Container extends Component {
     render() {
         return (
-            <View style={styles.container}>
+                <View style={styles.container}>
                 {this.props.children}
-            </View>
-        );
+                </View>
+               );
     }
 }
 

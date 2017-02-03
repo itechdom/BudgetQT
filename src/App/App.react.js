@@ -3,7 +3,6 @@ import { Navigator, NativeModules, StatusBar, View } from 'react-native';
 
 import { COLOR, ThemeProvider } from 'react-native-material-ui';
 import routes from '../routes';
-import Container from '../Container';
 
 const UIManager = NativeModules.UIManager;
 

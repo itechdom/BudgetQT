@@ -1,20 +1,20 @@
 import Home from './App/Home.react';
 // components
-import ActionButton from './ActionButton';
-import ActionButtonToolbar from './ActionButton/ActionButtonToolbar.react';
-import ActionButtonSpeedDial from './ActionButton/ActionButtonSpeedDial.react';
-import Avatar from './Avatar';
-import BottomNavigation from './BottomNavigation';
-import Badge from './Badge';
-import Button from './Button';
-import Card from './Card';
-import Checkbox from './Checkbox';
-import Dialog from './Dialog';
-import Drawer from './Drawer';
-import IconToggle from './IconToggle';
-import List from './List';
-import RadioButton from './RadioButton';
-import Toolbar from './Toolbars';
+import ActionButton from './Shared/Material/ActionButton';
+import ActionButtonToolbar from './Shared/Material/ActionButton/ActionButtonToolbar.react';
+import ActionButtonSpeedDial from './Shared/Material/ActionButton/ActionButtonSpeedDial.react';
+import Avatar from './Shared/Material/Avatar';
+import BottomNavigation from './Shared/Material/BottomNavigation';
+import Badge from './Shared/Material/Badge';
+import Button from './Shared/Material/Button';
+import Card from './Shared/Material/Card';
+import Checkbox from './Shared/Material/Checkbox';
+import Dialog from './Shared/Material/Dialog';
+import Drawer from './Shared/Material/Drawer';
+import IconToggle from './Shared/Material/IconToggle';
+import List from './Shared/Material/List';
+import RadioButton from './Shared/Material/RadioButton';
+import Toolbar from './Shared/Material/Toolbars';
 
 export default {
     home: {
