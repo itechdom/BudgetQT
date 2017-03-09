@@ -1,7 +1,7 @@
 import { AppRegistry } from 'react-native';
 import React, { Component } from 'react';
 
-import App from './App/App.react';
+import App from './App/App.js';
 
 
 export default function index() {
