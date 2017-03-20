@@ -1,0 +1,38 @@
+{
+  "name": "BudgetQT",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "mobx": "^3.0.2",
+    "mobx-react": "^4.1.0",
+    "ramda": "^0.23.0",
+    "babel-eslint": "^6.1.2",
+    "color": "^1.0.3",
+    "eslint": "^3.6.1",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-plugin-import": "^1.11.1",
+    "eslint-plugin-jsx-a11y": "^2.2.0",
+    "eslint-plugin-react": "^6.3.0",
+    "lodash.merge": "^4.6.0",
+    "react": "15.4.1",
+    "react-native": "^0.39.2",
+    "react-native-material-design-styles": "^0.2.6",
+    "react-native-material-ui": "^1.6.0",
+    "react-native-vector-icons": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-jest": "18.0.0",
+    "babel-plugin-module-alias": "^1.6.0",
+    "babel-preset-react-native": "1.9.1",
+    "jest": "18.0.0",
+    "react-test-renderer": "15.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
