@@ -1,2 +1,2 @@
-#BudgetQT
+# BudgetQT
 My personal budgeting app
