@@ -122,6 +122,13 @@ const styles = {
 
 @observer class App extends React.Component {
 
+    constructor(props){
+      super(props);
+      this.state = {
+        deleteExpenseDialogOpen:false
+      }
+    }
+
     renderHome() {
         if (this.props.userStore.selectedRoute === 0) {
             return <div>
@@ -137,11 +144,18 @@ const styles = {
                         expenseEditable={this.props.userStore.expenseEditable}
                         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
+                        onExpenseDelete={(expense)=>{this.props.userStore.deleteExpense(expense);this.setState({deleteExpenseDialogOpen:true})}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
                             this.props.userStore.getExpensesByPage();
                         }}
+                    />
+                    <DeleteExpenseDialog
+                        open={this.state.deleteExpenseDialogOpen}
+                        onAgree={()=>{this.props.userStore.deleteExpense();this.setState({deleteExpenseDialogOpen:false})}}
+                        onCancel={()=>this.setState({deleteExpenseDialogOpen:false})}
+                        expense={this.props.userStore.deletedExpense}
                     />
                     <ImportExpenses
                         fileNames = {this.props.userStore.fileNames}
@@ -220,18 +234,37 @@ const Home = ({
     </section>
 );
 
-const Expenses = observer(({
-    categoryList,
-    expenseList,
-    onExpensesAdd,
-    expenseEditable,
-    onExpenseOpen,
-    onExpenseClose,
-    newExpense,
-    totalExpenses,
-    onNextPage
-}) => (
-    <section className="list text-center">
+@observer class Expenses extends React.Component{
+
+    state = {
+      open: false,
+      importedExpense:{}
+    };
+
+    handleOpen = () => {
+      this.setState({open: true});
+    };
+
+    handleClose = () => {
+      this.setState({open: false});
+    };
+    
+    constructor(props){
+      super(props)
+      categoryList;
+      expenseList;
+      onExpensesAdd;
+      expenseEditable;
+      onExpenseOpen;
+      onExpenseClose;
+      newExpense;
+      totalExpenses;
+      onNextPage;
+      onExpenseDelete
+    }
+
+    render(){
+     return <section className="list text-center">
         <FormattedDate
             value={Date.now()}
             year='numeric'
@@ -254,6 +287,7 @@ const Expenses = observer(({
                           <TableHeaderColumn>Amount</TableHeaderColumn>
                           <TableHeaderColumn>Title</TableHeaderColumn>
                           <TableHeaderColumn>Category</TableHeaderColumn>
+                          <TableHeaderColumn>Delete?</TableHeaderColumn>
                       </TableRow>
                   </TableHeader>
                 <TableBody className="top-1">
@@ -271,6 +305,12 @@ const Expenses = observer(({
                         <TableRowColumn>{expense.amount}</TableRowColumn>
                         <TableRowColumn>{expense.title}</TableRowColumn>
                         <TableRowColumn style={{flexDirection:'column',display:'flex',flexWrap:'wrap'}}>{expense.tags.map(tag=><Chip >{tag}</Chip>)}</TableRowColumn>
+                        <TableRowColumn>
+                            <RaisedButton
+                                label={"delete"}
+                                secondary={true}
+                                onClick={onExpenseDelete}/>
+                        </TableRowColumn>
                     </TableRow>
                 ))
             }
@@ -281,7 +321,8 @@ const Expenses = observer(({
                 onClick={onNextPage}
             />
     </section>
-));
+    }
+}
 
 const ExpenseDialog = ({
     handleClose,
@@ -410,22 +451,22 @@ const ImportExpenses = ({
                 label={`load more ...`}
                 onClick={this.props.onNextPage}
             />
-            <DeleteImportedExpenseDialog
+            <DeleteExpenseDialog
                 open={this.state.open}
                 onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
                 onCancel={()=>this.setState({open:false})}
-                importedExpense={this.state.importedExpense}
+                expense={this.state.importedExpense}
             />
         </div>
     }
 
 };
 
-const DeleteImportedExpenseDialog = ({
+const DeleteExpenseDialog = ({
     open,
     onAgree,
     onCancel,
-    importedExpense
+    expense
 }) => {
     const actions = [
         <FlatButton
@@ -446,7 +487,7 @@ const DeleteImportedExpenseDialog = ({
               open={open}
               onRequestClose={onCancel}
             >
-                {importedExpense.tags?importedExpense.tags.join('-'):"no expense yet"}
+                {expense.tags?expense.tags.join('-'):"no expense yet"}
             </Dialog>
 };
 
