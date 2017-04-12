@@ -121,13 +121,13 @@ const styles = {
 };
 
 @observer class App extends React.Component {
-    
+
     renderHome() {
         if (this.props.userStore.selectedRoute === 0) {
             return <div>
-                    <Home  
+                    <Home
                         dailyBudgetEditable={this.props.userStore.dailyBudgetEditable}
-                        dailyBudget={this.props.userStore.dailyBudget} 
+                        dailyBudget={this.props.userStore.dailyBudget}
                         onDailyBudgetChange={(event,newValue)=>this.props.userStore.dailyBudget=newValue}
                         onEditChange={(event)=>this.props.userStore.dailyBudgetEditable = !this.props.userStore.dailyBudgetEditable}
                     />
@@ -164,13 +164,13 @@ const styles = {
             </div>
         }
     }
-    
+
     renderStats(){
         if(this.props.userStore.selectedRoute === 1){
             return <Stats />
         }
     }
-    
+
     render() {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
@@ -183,7 +183,7 @@ const styles = {
                         <h2>Welcome {this.props.userStore.name}!</h2>
                         </div>}
                      />
-                        <Menu 
+                        <Menu
                             selectedRoute={this.props.userStore.selectedRoute}
                             changeRoute={(index)=>this.props.userStore.selectedRoute = index}
                         />
@@ -208,13 +208,13 @@ const Home = ({
             <p>
             Your Daily Budget is: $
             {dailyBudgetEditable?<TextField onChange={onDailyBudgetChange} type="number" hintText="Enter your daily budget"/>:<span>{dailyBudget}</span>}
-            <FlatButton 
-                label="Edit" 
-                primary={true} 
+            <FlatButton
+                label="Edit"
+                primary={true}
                 onClick={onEditChange}
             />
             </p>
-            <p>That's ${4 * dailyBudget} per week</p>
+            <p>{`That's ${4 * dailyBudget} per week`}</p>
             <p>And ${30 * dailyBudget} per month </p>
         </div>
     </section>
@@ -239,7 +239,7 @@ const Expenses = observer(({
             day='numeric'
             weekday='long'
         />
-        <ExpenseDialog 
+        <ExpenseDialog
             categoryList={categoryList}
             open={expenseEditable}
             handleOpen={onExpenseOpen}
@@ -276,7 +276,7 @@ const Expenses = observer(({
             }
             </TableBody>
             </Table>
-            <RaisedButton 
+            <RaisedButton
                 label={`load more ...`}
                 onClick={onNextPage}
             />
@@ -334,7 +334,7 @@ const ImportExpenses = ({
         <div>
         <Dropzone onDrop={((acceptedFiles,rejectedFiles)=>onFileAccepted(acceptedFiles))}>
             <div>Try dropping some files here, or click to select files to upload.</div>
-            <div>Files Accepted: 
+            <div>Files Accepted:
             <ul>
             {
                 fileNames.map(file => (<li>{file}</li>))
@@ -348,7 +348,7 @@ const ImportExpenses = ({
 
 //http://www.material-ui.com/#/components/table
 @observer class FlexibleTable extends React.Component {
-    
+
   state = {
     open: false,
     importedExpense:{}
@@ -361,9 +361,9 @@ const ImportExpenses = ({
   handleClose = () => {
     this.setState({open: false});
   };
-  
+
   render(){
-     return <div> 
+     return <div>
             <Table>
                 <TableHeader>
                       <TableRow>
@@ -392,9 +392,9 @@ const ImportExpenses = ({
                                 <TableRowColumn>{expense.tags.map((item,index)=>{return<Chip key={index}>{item}</Chip>})}</TableRowColumn>
                                 <TableRowColumn><RaisedButton label={`import`} onClick={(event)=>this.props.onExpenseImport(expense)}  /></TableRowColumn>
                                 <TableRowColumn>
-                                    <RaisedButton 
-                                        label={"delete"} 
-                                        secondary={true} 
+                                    <RaisedButton
+                                        label={"delete"}
+                                        secondary={true}
                                         onClick={(event)=>{
                                                 this.setState({open:true});
                                                 this.setState({importedExpense:expense});
@@ -406,7 +406,7 @@ const ImportExpenses = ({
                     }
                 </TableBody>
             </Table>
-            <RaisedButton 
+            <RaisedButton
                 label={`load more ...`}
                 onClick={this.props.onNextPage}
             />

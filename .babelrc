@@ -1,10 +1,4 @@
 {
-    "presets": ["react-native"],
-    "plugins": [
-        ["module-alias", [
-        { "src": "./src/Utils", "expose": "utils" },
-        { "src": "./src", "expose": "src" },
-        { "src": "npm:lodash", "expose": "underscore" }
-        ]]
-    ]
+    "presets": ["stage-0","latest","react"],
+    "plugins": ["transform-decorators-legacy","transform-class-properties","add-module-exports"]
 }
