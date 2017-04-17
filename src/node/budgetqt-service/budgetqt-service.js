@@ -14,14 +14,14 @@ export default function({
     ImportedExpense,
     Expense
 }) {
-    
+
     //busboy is for uploading multipart forms (csv files here)
     app.use(busboy());
-    
+
     apiRoutes.get('/', function(req, res) {
         res.send('Hello! this is budgetqt backend!');
     });
-    
+
     apiRoutes.get('/expenses', function(req, res) {
         Expense.find({}, (err, data) => {
             if (err) {
@@ -31,7 +31,7 @@ export default function({
             res.send(data);
         });
     });
-    
+
     apiRoutes.post('/expenses', function(req, res) {
         let newExpense = new Expense(req.body);
         Expense.save(newExpense, (err, data) => {
@@ -42,7 +42,20 @@ export default function({
             res.send(data);
         });
     });
-    
+
+    apiRoutes.delete('/expenses', (req, res) => {
+      let expense = req.body;
+      //remove the imported expense
+      Expense.find({
+        _id: expense["_id"]
+      }).remove().exec((err) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        res.status(200).send();
+      });
+    });
+
     apiRoutes.get('/expenses/imported', (req, res) => {
         ImportedExpense.find({}, (err, data) => {
             if (err) {
@@ -52,7 +65,7 @@ export default function({
             res.send(data);
         });
     });
-    
+
     apiRoutes.post('/expenses/imported', (req, res) => {
         //take the imported expense, format it and add it to the expenses collection
         let expense = req.body;
@@ -61,7 +74,7 @@ export default function({
             upsert: true
         }, function(err, doc) {
             if (err) return res.send(500, {error: err});
-            
+
             //remove the imported expense
             ImportedExpense.find({
                 _id: expense["_id"]
@@ -70,7 +83,7 @@ export default function({
                     return res.status(500).send(err);
                 }
             });
-            
+
             res.send(newExpense);
         });
     });
@@ -84,7 +97,7 @@ export default function({
             res.send(data);
         });
     });
-    
+
     apiRoutes.delete('/expenses/imported', (req, res) => {
         let expense = req.body;
         //remove the imported expense
@@ -122,7 +135,7 @@ export default function({
         }
         res.send('You have uploaded the file!');
     });
-    
+
     apiRoutes.get('/expenses/:id', function(req, res) {
         let id = req.params.id;
         Expense.find({id}, (err, data) => {
@@ -133,7 +146,7 @@ export default function({
             res.send(data);
         });
     });
-    
+
     apiRoutes.put('/expenses/:id', function(req, res) {
         let newExpense = new Expense(req.body);
         let id = req.params.id;
@@ -145,7 +158,7 @@ export default function({
             res.send(data);
         });
     });
-    
+
     apiRoutes.delete('/expenses/:id', function(req, res) {
         let id = req.params.id;
         Expense.find({id}).remove().exec((err, data) => {
@@ -156,6 +169,6 @@ export default function({
             res.send(data);
         });
     });
-    
+
     return apiRoutes;
 }

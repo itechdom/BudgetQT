@@ -144,7 +144,7 @@ const styles = {
                         expenseEditable={this.props.userStore.expenseEditable}
                         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
-                        onExpenseDelete={(expense)=>{this.props.userStore.deleteExpense(expense);this.setState({deleteExpenseDialogOpen:true})}}
+                        onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
@@ -248,20 +248,6 @@ const Home = ({
     handleClose = () => {
       this.setState({open: false});
     };
-    
-    constructor(props){
-      super(props)
-      categoryList;
-      expenseList;
-      onExpensesAdd;
-      expenseEditable;
-      onExpenseOpen;
-      onExpenseClose;
-      newExpense;
-      totalExpenses;
-      onNextPage;
-      onExpenseDelete
-    }
 
     render(){
      return <section className="list text-center">
@@ -273,12 +259,12 @@ const Home = ({
             weekday='long'
         />
         <ExpenseDialog
-            categoryList={categoryList}
-            open={expenseEditable}
-            handleOpen={onExpenseOpen}
-            handleClose={onExpenseClose}
-            handleSubmit={(event)=>{console.log(expenseList);newExpense.date = new Date();expenseList.push(newExpense);onExpenseClose()}}
-            newExpense={newExpense}
+            categoryList={this.props.categoryList}
+            open={this.props.expenseEditable}
+            handleOpen={this.props.onExpenseOpen}
+            handleClose={this.props.onExpenseClose}
+            handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
+            newExpense={this.props.newExpense}
         />
             <Table>
                   <TableHeader>
@@ -292,7 +278,7 @@ const Home = ({
                   </TableHeader>
                 <TableBody className="top-1">
             {
-                expenseList.map((expense,index) => (
+                this.props.expenseList.map((expense,index) => (
                     <TableRow key={index}>
                       <TableRowColumn>
                         <FormattedDate
@@ -309,7 +295,12 @@ const Home = ({
                             <RaisedButton
                                 label={"delete"}
                                 secondary={true}
-                                onClick={onExpenseDelete}/>
+                                onClick={(event)=>{
+                                  this.setState({open:true});
+                                  this.setState({importedExpense:expense});
+                                }
+                              }
+                            />
                         </TableRowColumn>
                     </TableRow>
                 ))
@@ -318,74 +309,17 @@ const Home = ({
             </Table>
             <RaisedButton
                 label={`load more ...`}
-                onClick={onNextPage}
+                onClick={this.props.onNextPage}
+            />
+            <DeleteExpenseDialog
+                open={this.state.open}
+                onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
+                onCancel={()=>this.setState({open:false})}
+                expense={this.state.importedExpense}
             />
     </section>
     }
 }
-
-const ExpenseDialog = ({
-    handleClose,
-    handleOpen,
-    open,
-    handleSubmit,
-    newExpense,
-    categoryList
-}) => {
-    const actions = [
-        <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={handleClose}
-      />,
-        <FlatButton
-        label="Submit"
-        primary={true}
-        onClick={handleSubmit}
-      />,
-    ];
-    return (
-        <div>
-            <RaisedButton label="Add Expense" onClick={handleOpen} />
-            <Dialog
-              title="Add Expense"
-              actions={actions}
-              modal={false}
-              open={open}
-              onRequestClose={handleClose}
-            >
-                <TextField onChange={(event,newValue)=>{newExpense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
-                <TextField onChange={(event,newValue)=>{newExpense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
-                <AutoComplete
-                  hintText="Expense Category"
-                  required="true"
-                  dataSource={categoryList.map(cat => cat.title)}
-                  onNewRequest={(chosenRequest,index)=>newExpense.category = categoryList[index]}
-                />
-            </Dialog>
-        </div>
-    );
-};
-
-const ImportExpenses = ({
-    onFileAccepted,
-    fileNames
-}) => {
-    return (
-        <div>
-        <Dropzone onDrop={((acceptedFiles,rejectedFiles)=>onFileAccepted(acceptedFiles))}>
-            <div>Try dropping some files here, or click to select files to upload.</div>
-            <div>Files Accepted:
-            <ul>
-            {
-                fileNames.map(file => (<li>{file}</li>))
-            }
-            </ul>
-            </div>
-        </Dropzone>
-    </div>
-    );
-};
 
 //http://www.material-ui.com/#/components/table
 @observer class FlexibleTable extends React.Component {
@@ -460,6 +394,69 @@ const ImportExpenses = ({
         </div>
     }
 
+};
+
+const ExpenseDialog = ({
+    handleClose,
+    handleOpen,
+    open,
+    handleSubmit,
+    newExpense,
+    categoryList
+}) => {
+    const actions = [
+        <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={handleClose}
+      />,
+        <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={handleSubmit}
+      />,
+    ];
+    return (
+        <div>
+            <RaisedButton label="Add Expense" onClick={handleOpen} />
+            <Dialog
+              title="Add Expense"
+              actions={actions}
+              modal={false}
+              open={open}
+              onRequestClose={handleClose}
+            >
+                <TextField onChange={(event,newValue)=>{newExpense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
+                <TextField onChange={(event,newValue)=>{newExpense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
+                <AutoComplete
+                  hintText="Expense Category"
+                  required="true"
+                  dataSource={categoryList.map(cat => cat.title)}
+                  onNewRequest={(chosenRequest,index)=>newExpense.category = categoryList[index]}
+                />
+            </Dialog>
+        </div>
+    );
+};
+
+const ImportExpenses = ({
+    onFileAccepted,
+    fileNames
+}) => {
+    return (
+        <div>
+        <Dropzone onDrop={((acceptedFiles,rejectedFiles)=>onFileAccepted(acceptedFiles))}>
+            <div>Try dropping some files here, or click to select files to upload.</div>
+            <div>Files Accepted:
+            <ul>
+            {
+                fileNames.map(file => (<li>{file}</li>))
+            }
+            </ul>
+            </div>
+        </Dropzone>
+    </div>
+    );
 };
 
 const DeleteExpenseDialog = ({
