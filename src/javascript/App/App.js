@@ -125,7 +125,8 @@ const styles = {
     constructor(props){
       super(props);
       this.state = {
-        deleteExpenseDialogOpen:false
+        deleteExpenseDialogOpen:false,
+        editExpenseDialogOpen:false
       }
     }
 
@@ -145,6 +146,7 @@ const styles = {
                         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
                         onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
+                        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense)}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
@@ -302,7 +304,18 @@ const Home = ({
                               }
                             />
                         </TableRowColumn>
-                    </TableRow>
+
+                        <TableRowColumn>
+                            <RaisedButton
+                              label={"edit"}
+                              secondary={true}
+                              onClick={(event)=>{
+                                this.props.onExpenseEdit(expense);
+                              }
+                              }
+                          />
+                      </TableRowColumn>
+                      </TableRow>
                 ))
             }
             </TableBody>
@@ -394,6 +407,46 @@ const Home = ({
         </div>
     }
 
+};
+
+const EditExpenseDialog = ({
+    handleClose,
+    handleOpen,
+    open,
+    handleSubmit,
+    expense
+}) => {
+    const actions = [
+        <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={handleClose}
+      />,
+        <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={handleSubmit}
+      />,
+    ];
+    return (
+        <div>
+            <Dialog
+              title="Edit Expense"
+              actions={actions}
+              modal={false}
+              open={open}
+              onRequestClose={handleClose}
+            >
+                <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
+                <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
+                {
+                    expense.tags?expense.tags.map(tag => {
+                      return <TextField onChange={(event,newValue)=>{expenses.tags[expenses.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
+                    }):<div>No Expense</div>
+                }
+            </Dialog>
+        </div>
+    );
 };
 
 const ExpenseDialog = ({

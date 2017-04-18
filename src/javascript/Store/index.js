@@ -16,6 +16,7 @@ export class User {
   @observable expenseImportedList = [];
   @observable expenseEditable=false;
   @observable deletedExpense = {};
+  @observable editedExpense = {};
   @observable categoryList=[];
   @observable selectedRoute = 0;
   @observable selectedDate = Date.now();
@@ -71,7 +72,7 @@ export class User {
         console.log("err: ",err);
       }
       let newExpenses = JSON.parse(res.text);
-      this.originalImportedExpenseList = newExpenses;
+      this.originalExpenseList = newExpenses;
       this.expenseList.push(...newExpenses.slice(0,10));
     }));
   }
@@ -167,10 +168,11 @@ export class User {
 
 export class Expense {
   id;
-  @observable date;
+  date;
   title;
   amount;
   category;
+  @observable tags;
   constructor(date,amount,category,title){
     this.id = uuidV4();
     this.date = date;
