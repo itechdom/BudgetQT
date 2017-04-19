@@ -270,18 +270,24 @@ const Home = ({
             handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
             newExpense={this.props.newExpense}
         />
-            <Table>
+            <Table
+              multiSelectable={true}
+              height={300}
+              >
                   <TableHeader>
                       <TableRow>
                           <TableHeaderColumn>Date</TableHeaderColumn>
                           <TableHeaderColumn>Amount</TableHeaderColumn>
                           <TableHeaderColumn>Title</TableHeaderColumn>
                           <TableHeaderColumn>Tags</TableHeaderColumn>
-                          <TableHeaderColumn>Delete?</TableHeaderColumn>
                           <TableHeaderColumn>Edit?</TableHeaderColumn>
+                          <TableHeaderColumn>Delete?</TableHeaderColumn>
                       </TableRow>
                   </TableHeader>
-                <TableBody className="top-1">
+                <TableBody
+                  className="top-1"
+                  stripedRows={true}
+                  >
             {
                 this.props.expenseList.map((expense,index) => (
                     <TableRow key={index} style={{margin:'10px'}}>
@@ -295,7 +301,18 @@ const Home = ({
                         </TableRowColumn>
                         <TableRowColumn>{expense.amount}</TableRowColumn>
                         <TableRowColumn>{expense.title}</TableRowColumn>
-                        <TableRowColumn style={{flexDirection:'column',display:'flex',flexWrap:'wrap'}}>{expense.tags.map(tag=><Chip >{tag}</Chip>)}</TableRowColumn>
+                        <TableRowColumn>{expense.tags.map(tag=><Chip >{tag}</Chip>)}</TableRowColumn>
+                        <TableRowColumn>
+                            <RaisedButton
+                              label={"edit"}
+                              primary={true}
+                              onClick={(event)=>{
+                                this.setState({editOpen:true});
+                                this.setState({editedExpense:expense});
+                              }
+                              }
+                          />
+                      </TableRowColumn>
                         <TableRowColumn>
                             <RaisedButton
                                 label={"delete"}
@@ -307,18 +324,6 @@ const Home = ({
                               }
                             />
                         </TableRowColumn>
-
-                        <TableRowColumn>
-                            <RaisedButton
-                              label={"edit"}
-                              secondary={true}
-                              onClick={(event)=>{
-                                this.setState({editOpen:true});
-                                this.setState({editedExpense:expense});
-                              }
-                              }
-                          />
-                      </TableRowColumn>
                       </TableRow>
                 ))
             }
@@ -330,7 +335,7 @@ const Home = ({
             />
             <EditExpenseDialog
               open={this.state.editOpen}
-              handleSubmit={(event)=>{this.props.onExpenseEdit(this.state.editedExpense)}}
+              handleSubmit={(event)=>{this.setState({editOpen:false});this.props.onExpenseEdit(this.state.editedExpense)}}
               handleClose={(event)=>{this.setState({editOpen:false})}}
               expense={this.state.editedExpense}
             />

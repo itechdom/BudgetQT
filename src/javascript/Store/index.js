@@ -99,7 +99,6 @@ export class User {
     this.expensePage++;
     let currentPage = this.expensePage * this.itemsPerPage;
     let prevPage = (this.expensePage - 1) * this.itemsPerPage;
-    console.log(this.expensePage);
     let nextArr = this.originalExpenseList.slice(prevPage,currentPage);
     this.expenseList.push(...nextArr);
   }
