@@ -236,6 +236,19 @@ const Home = ({
     </section>
 );
 
+export const ClickableRow = (props) => {
+  // Destructure props to keep the expected MUI TableRow props
+  // while having access to the rowData prop
+  const {rowData, ...restProps} = props;
+  return (
+    <TableRow
+      {...restProps}
+      onMouseDown={()=> console.log('clicked', props.rowData)}>
+      {props.children}
+    </TableRow>
+  )
+};
+
 @observer class Expenses extends React.Component{
 
     state = {
@@ -290,7 +303,7 @@ const Home = ({
                   >
             {
                 this.props.expenseList.map((expense,index) => (
-                    <TableRow key={index} style={{margin:'10px'}}>
+                    <ClickableRow rowData={expense}>
                       <TableRowColumn>
                         <FormattedDate
                             value={expense.date}
@@ -313,10 +326,10 @@ const Home = ({
                               }
                           />
                       </TableRowColumn>
-                        <TableRowColumn>
-                            <RaisedButton
-                                label={"delete"}
-                                secondary={true}
+                      <TableRowColumn>
+                          <RaisedButton
+                              label={"delete"}
+                              secondary={true}
                                 onClick={(event)=>{
                                   this.setState({open:true});
                                   this.setState({importedExpense:expense});
@@ -324,7 +337,7 @@ const Home = ({
                               }
                             />
                         </TableRowColumn>
-                      </TableRow>
+                      </ClickableRow>
                 ))
             }
             </TableBody>
