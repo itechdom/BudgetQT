@@ -240,7 +240,9 @@ const Home = ({
 
     state = {
       open: false,
-      importedExpense:{}
+      editOpen:false,
+      importedExpense:{},
+      editedExpense:{}
     };
 
     handleOpen = () => {
@@ -274,14 +276,15 @@ const Home = ({
                           <TableHeaderColumn>Date</TableHeaderColumn>
                           <TableHeaderColumn>Amount</TableHeaderColumn>
                           <TableHeaderColumn>Title</TableHeaderColumn>
-                          <TableHeaderColumn>Category</TableHeaderColumn>
+                          <TableHeaderColumn>Tags</TableHeaderColumn>
                           <TableHeaderColumn>Delete?</TableHeaderColumn>
+                          <TableHeaderColumn>Edit?</TableHeaderColumn>
                       </TableRow>
                   </TableHeader>
                 <TableBody className="top-1">
             {
                 this.props.expenseList.map((expense,index) => (
-                    <TableRow key={index}>
+                    <TableRow key={index} style={{margin:'10px'}}>
                       <TableRowColumn>
                         <FormattedDate
                             value={expense.date}
@@ -310,7 +313,8 @@ const Home = ({
                               label={"edit"}
                               secondary={true}
                               onClick={(event)=>{
-                                this.props.onExpenseEdit(expense);
+                                this.setState({editOpen:true});
+                                this.setState({editedExpense:expense});
                               }
                               }
                           />
@@ -324,11 +328,17 @@ const Home = ({
                 label={`load more ...`}
                 onClick={this.props.onNextPage}
             />
+            <EditExpenseDialog
+              open={this.state.editOpen}
+              handleSubmit={(event)=>{this.props.onExpenseEdit(this.state.editedExpense)}}
+              handleClose={(event)=>{this.setState({editOpen:false})}}
+              expense={this.state.editedExpense}
+            />
             <DeleteExpenseDialog
-                open={this.state.open}
-                onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
-                onCancel={()=>this.setState({open:false})}
-                expense={this.state.importedExpense}
+              open={this.state.open}
+              onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
+                  onCancel={()=>this.setState({open:false})}
+                  expense={this.state.importedExpense}
             />
     </section>
     }
@@ -411,7 +421,6 @@ const Home = ({
 
 const EditExpenseDialog = ({
     handleClose,
-    handleOpen,
     open,
     handleSubmit,
     expense
@@ -437,11 +446,11 @@ const EditExpenseDialog = ({
               open={open}
               onRequestClose={handleClose}
             >
-                <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
-                <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
+                <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title" defaultValue={expense.title}/>
+                <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount" defaultValue={expense.amount}/>
                 {
                     expense.tags?expense.tags.map(tag => {
-                      return <TextField onChange={(event,newValue)=>{expenses.tags[expenses.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
+                      return <TextField onChange={(event,newValue)=>{expense.tags[expense.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
                     }):<div>No Expense</div>
                 }
             </Dialog>

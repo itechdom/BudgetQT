@@ -100,7 +100,7 @@ export class User {
     let currentPage = this.expensePage * this.itemsPerPage;
     let prevPage = (this.expensePage - 1) * this.itemsPerPage;
     console.log(this.expensePage);
-    let nextArr = this.originalImportedExpenseList.slice(prevPage,currentPage);
+    let nextArr = this.originalExpenseList.slice(prevPage,currentPage);
     this.expenseList.push(...nextArr);
   }
 
