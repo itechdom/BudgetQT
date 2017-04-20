@@ -43,6 +43,29 @@ export default function({
         });
     });
 
+    apiRoutes.put('/expenses', (req, res) => {
+      //take the imported expense, format it and add it to the expenses collection
+      let expense = req.body;
+      let newExpense = {title:expense.title,amount:expense.amount,date:expense.date,tags:expense.tags}
+      Expense.findOneAndUpdate({_id:expense._id}, newExpense, {
+        upsert: false
+      }, function(err, doc) {
+        if (err) return res.send(500, {error: err});
+        res.send(newExpense);
+      });
+    });
+
+    apiRoutes.post('/expenses', function(req, res) {
+      let newExpense = new Expense(req.body);
+      Expense.save(newExpense, (err, data) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        res.send(data);
+      });
+    });
+
     apiRoutes.delete('/expenses', (req, res) => {
       let expense = req.body;
       //remove the imported expense

@@ -146,8 +146,7 @@ const styles = {
                         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
                         onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
-                        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense)}}
-                        onTagAdd= {(expense,tag)=>{expense.tags.push(tag)}}
+                        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.userStore.updateExpense(expense)}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
@@ -338,7 +337,7 @@ const Home = ({
               open={this.state.editOpen}
               handleSubmit={(event)=>{this.setState({editOpen:false});this.props.onExpenseEdit(this.state.editedExpense)}}
               handleClose={(event)=>{this.setState({editOpen:false})}}
-              handleTagAdd={this.props.onTagAdd}
+              handleTagAdd={(expense,tag)=>{expense.tags.push(tag)}}
               expense={this.state.editedExpense}
             />
             <DeleteExpenseDialog

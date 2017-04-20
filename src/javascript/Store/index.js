@@ -77,6 +77,21 @@ export class User {
     }));
   }
 
+  @action updateExpense(expense) {
+    this.pendingRequestCount++;
+    let req = superagent.put(`${HOST}/api/v1/expenses`)
+    .send(expense);
+    req.end(action("updateExpense-callback", (error, results) => {
+      if (error){
+        console.error(error);
+      }
+      else {
+        console.log(results);
+        this.pendingRequestCount--;
+      }
+    }));
+  }
+
   @action deleteExpense(expense) {
     this.pendingRequestCount++;
     let req = superagent.delete(`${HOST}/api/v1/expenses`)
