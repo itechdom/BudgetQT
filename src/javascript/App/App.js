@@ -147,6 +147,7 @@ const styles = {
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
                         onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
                         onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense)}}
+                        onTagAdd= {(expense,tag)=>{expense.tags.push(tag)}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
@@ -236,19 +237,6 @@ const Home = ({
     </section>
 );
 
-export const ClickableRow = (props) => {
-  // Destructure props to keep the expected MUI TableRow props
-  // while having access to the rowData prop
-  const {rowData, ...restProps} = props;
-  return (
-    <TableRow
-      {...restProps}
-      onMouseDown={()=> console.log('clicked', props.rowData)}>
-      {props.children}
-    </TableRow>
-  )
-};
-
 @observer class Expenses extends React.Component{
 
     state = {
@@ -303,7 +291,7 @@ export const ClickableRow = (props) => {
                   >
             {
                 this.props.expenseList.map((expense,index) => (
-                    <ClickableRow rowData={expense}>
+                    <TableRow onMouseDown={()=>console.log("clicked")}>
                       <TableRowColumn>
                         <FormattedDate
                             value={expense.date}
@@ -337,7 +325,7 @@ export const ClickableRow = (props) => {
                               }
                             />
                         </TableRowColumn>
-                      </ClickableRow>
+                      </TableRow>
                 ))
             }
             </TableBody>
@@ -350,6 +338,7 @@ export const ClickableRow = (props) => {
               open={this.state.editOpen}
               handleSubmit={(event)=>{this.setState({editOpen:false});this.props.onExpenseEdit(this.state.editedExpense)}}
               handleClose={(event)=>{this.setState({editOpen:false})}}
+              handleTagAdd={this.props.onTagAdd}
               expense={this.state.editedExpense}
             />
             <DeleteExpenseDialog
@@ -361,6 +350,94 @@ export const ClickableRow = (props) => {
     </section>
     }
 }
+
+const EditExpenseDialog = observer(({
+    handleClose,
+    open,
+    handleSubmit,
+    handleTagAdd,
+    expense
+}) => {
+    const actions = [
+        <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={handleClose}
+      />,
+        <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={handleSubmit}
+      />,
+    ];
+    return (
+        <div>
+            <Dialog
+              title="Edit Expense"
+              actions={actions}
+              modal={false}
+              open={open}
+              onRequestClose={handleClose}
+            >
+                <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title" defaultValue={expense.title}/>
+                <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount" defaultValue={expense.amount}/>
+                {
+                    expense.tags?expense.tags.map(tag => {
+                      return <TextField onChange={(event,newValue)=>{expense.tags[expense.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
+                    }):<div>No Expense</div>
+                }
+                <FlatButton
+                  label="Add Tag"
+                  primary={true}
+                  onClick={(event)=>{handleTagAdd(expense,"")}}
+                />
+            </Dialog>
+        </div>
+    );
+});
+
+const ExpenseDialog = ({
+    handleClose,
+    handleOpen,
+    open,
+    handleSubmit,
+    newExpense,
+    categoryList
+}) => {
+    const actions = [
+        <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={handleClose}
+      />,
+        <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={handleSubmit}
+      />,
+    ];
+    return (
+        <div>
+            <RaisedButton label="Add Expense" onClick={handleOpen} />
+            <Dialog
+              title="Add Expense"
+              actions={actions}
+              modal={false}
+              open={open}
+              onRequestClose={handleClose}
+            >
+                <TextField onChange={(event,newValue)=>{newExpense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
+                <TextField onChange={(event,newValue)=>{newExpense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
+                <AutoComplete
+                  hintText="Expense Category"
+                  required="true"
+                  dataSource={categoryList.map(cat => cat.title)}
+                  onNewRequest={(chosenRequest,index)=>newExpense.category = categoryList[index]}
+                />
+            </Dialog>
+        </div>
+    );
+};
 
 //http://www.material-ui.com/#/components/table
 @observer class FlexibleTable extends React.Component {
@@ -435,88 +512,6 @@ export const ClickableRow = (props) => {
         </div>
     }
 
-};
-
-const EditExpenseDialog = ({
-    handleClose,
-    open,
-    handleSubmit,
-    expense
-}) => {
-    const actions = [
-        <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={handleClose}
-      />,
-        <FlatButton
-        label="Submit"
-        primary={true}
-        onClick={handleSubmit}
-      />,
-    ];
-    return (
-        <div>
-            <Dialog
-              title="Edit Expense"
-              actions={actions}
-              modal={false}
-              open={open}
-              onRequestClose={handleClose}
-            >
-                <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title" defaultValue={expense.title}/>
-                <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount" defaultValue={expense.amount}/>
-                {
-                    expense.tags?expense.tags.map(tag => {
-                      return <TextField onChange={(event,newValue)=>{expense.tags[expense.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
-                    }):<div>No Expense</div>
-                }
-            </Dialog>
-        </div>
-    );
-};
-
-const ExpenseDialog = ({
-    handleClose,
-    handleOpen,
-    open,
-    handleSubmit,
-    newExpense,
-    categoryList
-}) => {
-    const actions = [
-        <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={handleClose}
-      />,
-        <FlatButton
-        label="Submit"
-        primary={true}
-        onClick={handleSubmit}
-      />,
-    ];
-    return (
-        <div>
-            <RaisedButton label="Add Expense" onClick={handleOpen} />
-            <Dialog
-              title="Add Expense"
-              actions={actions}
-              modal={false}
-              open={open}
-              onRequestClose={handleClose}
-            >
-                <TextField onChange={(event,newValue)=>{newExpense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
-                <TextField onChange={(event,newValue)=>{newExpense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
-                <AutoComplete
-                  hintText="Expense Category"
-                  required="true"
-                  dataSource={categoryList.map(cat => cat.title)}
-                  onNewRequest={(chosenRequest,index)=>newExpense.category = categoryList[index]}
-                />
-            </Dialog>
-        </div>
-    );
 };
 
 const ImportExpenses = ({
