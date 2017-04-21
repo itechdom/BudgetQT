@@ -3,6 +3,7 @@ const express = require('express');
 var busboy = require('connect-busboy');
 var csv = require('csv-parser')
 import parser from './data-parser/data-parser.js';
+import csvConverter from './csv-converter/csv-converter.js';
 
 // ---------------------------------------------------------
 // get an instance of the router for api routes
@@ -77,6 +78,12 @@ export default function({
         }
         res.status(200).send();
       });
+    });
+
+    apiRoutes.post('/expenses/export/csv', (req, res) => {
+      res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
+      res.set('Content-Type', 'text/csv');
+      res.status(200).send(csv);
     });
 
     apiRoutes.get('/expenses/imported', (req, res) => {
