@@ -130,15 +130,16 @@ const styles = {
       }
     }
 
+  /**  <Home
+        dailyBudgetEditable={this.props.userStore.dailyBudgetEditable}
+        dailyBudget={this.props.userStore.dailyBudget}
+        onDailyBudgetChange={(event,newValue)=>this.props.userStore.dailyBudget=newValue}
+        onEditChange={(event)=>this.props.userStore.dailyBudgetEditable = !this.props.userStore.dailyBudgetEditable}
+    />
+    **/
     renderHome() {
         if (this.props.userStore.selectedRoute === 0) {
-            return <div>
-                    <Home
-                        dailyBudgetEditable={this.props.userStore.dailyBudgetEditable}
-                        dailyBudget={this.props.userStore.dailyBudget}
-                        onDailyBudgetChange={(event,newValue)=>this.props.userStore.dailyBudget=newValue}
-                        onEditChange={(event)=>this.props.userStore.dailyBudgetEditable = !this.props.userStore.dailyBudgetEditable}
-                    />
+            return <div style={{marginTop:10}}>
                     <Expenses
                         categoryList={this.props.userStore.categoryList}
                         expenseList={this.props.userStore.expenseList}
@@ -147,6 +148,7 @@ const styles = {
                         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
                         onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
                         onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.userStore.updateExpense(expense)}}
+                        onExpenseDownload = {()=>{this.props.userStore.exportExpensesCSV()}}
                         newExpense={new Expense()}
                         totalExpenses={this.props.userStore.totalExpenses}
                         onNextPage={(event)=>{
@@ -261,6 +263,10 @@ const Home = ({
             month='long'
             day='numeric'
             weekday='long'
+        />
+        <RaisedButton
+          label="Download CSV"
+          onClick={this.props.onExpenseDownload}
         />
         <ExpenseDialog
             categoryList={this.props.categoryList}

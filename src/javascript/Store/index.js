@@ -64,6 +64,10 @@ export class User {
     }));
   }
 
+  @action exportExpensesCSV(){
+    window.open(`${HOST}/api/v1/expenses/export/csv`,'_blank');
+  }
+
   @action getExpenses(){
     this.pendingRequestCount++;
     let req = superagent.get(`${HOST}/api/v1/expenses`);
