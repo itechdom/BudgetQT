@@ -80,10 +80,17 @@ export default function({
       });
     });
 
-    apiRoutes.post('/expenses/export/csv', (req, res) => {
-      res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
-      res.set('Content-Type', 'text/csv');
-      res.status(200).send(csv);
+    apiRoutes.get('/expenses/export/csv', (req, res) => {
+      Expense.find({}, (err, data) => {
+          if (err) {
+              console.log(err);
+              return res.status(500).send(err);
+          }
+          res.setHeader('Content-disposition', 'attachment; filename=expenses.csv');
+          res.set('Content-Type', 'text/csv');
+          let csvFile = csvConverter(data);
+          res.status(200).send(csvFile);
+      });
     });
 
     apiRoutes.get('/expenses/imported', (req, res) => {
