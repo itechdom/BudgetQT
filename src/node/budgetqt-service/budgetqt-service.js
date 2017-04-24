@@ -125,28 +125,6 @@ export default function({
         });
     });
 
-    apiRoutes.put('/expenses/imported/:id', (req, res) => {
-        ImportedExpense.update({}, (err, data) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send(err);
-            }
-            res.send(data);
-        });
-    });
-
-    apiRoutes.delete('/expenses/imported', (req, res) => {
-        let expense = req.body;
-        //remove the imported expense
-        ImportedExpense.find({
-            _id: expense["_id"]
-        }).remove().exec((err) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.status(200).send();
-        });
-    });
 
     apiRoutes.post('/expenses/upload/csv', function(req, res) {
         if (req.busboy) {
