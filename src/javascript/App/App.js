@@ -269,7 +269,6 @@ const Home = ({
         />
             <Table
               multiSelectable={true}
-              height={300}
               >
                   <TableHeader>
                       <TableRow>

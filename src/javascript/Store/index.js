@@ -102,7 +102,6 @@ export class User {
     req.end(action("deleteExpense-callback", (error, results) => {
       if (error){
         console.error(error);
-        //push back the importedList item
         this.expenseList.push(expense);
       }
       else {

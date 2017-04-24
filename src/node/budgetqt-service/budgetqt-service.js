@@ -5,14 +5,10 @@ var csv = require('csv-parser')
 import parser from './data-parser/data-parser.js';
 import csvConverter from './csv-converter/csv-converter.js';
 
-// ---------------------------------------------------------
-// get an instance of the router for api routes
-// ---------------------------------------------------------
 var apiRoutes = express.Router();
 
 export default function({
     app,
-    ImportedExpense,
     Expense
 }) {
 
@@ -93,38 +89,6 @@ export default function({
       });
     });
 
-    apiRoutes.get('/expenses/imported', (req, res) => {
-        ImportedExpense.find({}, (err, data) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send(err);
-            }
-            res.send(data);
-        });
-    });
-
-    apiRoutes.post('/expenses/imported', (req, res) => {
-        //take the imported expense, format it and add it to the expenses collection
-        let expense = req.body;
-        let newExpense = {title:expense.file,amount:expense.amount,date:expense.date,tags:expense.tags}
-        Expense.findOneAndUpdate({_id:expense._id}, newExpense, {
-            upsert: true
-        }, function(err, doc) {
-            if (err) return res.send(500, {error: err});
-
-            //remove the imported expense
-            ImportedExpense.find({
-                _id: expense["_id"]
-            }).remove().exec((err) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-            });
-
-            res.send(newExpense);
-        });
-    });
-
     apiRoutes.post('/expenses/upload/csv', function(req, res) {
         if (req.busboy) {
             req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
@@ -132,9 +96,11 @@ export default function({
                     var expense = parser({
                         entry
                     });
-                    expense.file = filename;
-                    //have a check here to make sure we don't overried already exisitng expenses?
-                    let newExpense = new ImportedExpense(expense);
+                    
+                    Expense.find({date:expense.date,amount:expense.amount,tags:expense.tags});
+
+                    expense.title = filename;
+                    let newExpense = new Expense(expense);
                     newExpense.save((err) => {
                         if (err) {
                             console.log(err);
