@@ -41,10 +41,6 @@ export class User {
     );
   }
 
-  @computed get fileNames(){
-    return this.filesAccepted.map((file)=>file.name);
-  }
-
   @action uploadCSV() {
     this.pendingRequestCount++;
     let req = superagent.post(`${HOST}/api/v1/expenses/upload/csv`);

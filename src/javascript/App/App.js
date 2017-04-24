@@ -162,13 +162,21 @@ const styles = {
                         expense={this.props.userStore.deletedExpense}
                     />
                     <ImportExpenses
-                        fileNames = {this.props.userStore.fileNames}
+                        filesAccepted = {this.props.userStore.filesAccepted}
                         onFileAccepted={((acceptedFiles)=>{
                             this.props.userStore.filesAccepted.push(
                                 acceptedFiles[acceptedFiles.length - 1]
                             );
-                            this.props.userStore.uploadCSV();
                         })}
+                        onFileUpload={(()=>{
+                          this.props.userStore.uploadCSV();
+                        })}
+                        onFileDelete={((file)=>{
+                          console.log(file,"deleted");
+                          console.log(this.props.userStore.filesAccepted);
+                          this.props.userStore.filesAccepted.remove(file);
+                        })
+                        }
                     />
             </div>
         }
@@ -434,25 +442,31 @@ const ExpenseDialog = ({
     );
 };
 
-const ImportExpenses = ({
+const ImportExpenses = observer(({
     onFileAccepted,
-    fileNames
+    onFileDelete,
+    onFileUpload,
+    filesAccepted
 }) => {
     return (
-        <div>
+      <div>
         <Dropzone onDrop={((acceptedFiles,rejectedFiles)=>onFileAccepted(acceptedFiles))}>
-            <div>Try dropping some files here, or click to select files to upload.</div>
-            <div>Files Accepted:
-            <ul>
-            {
-                fileNames.map(file => (<li>{file}</li>))
-            }
-            </ul>
-            </div>
+          <div>Try dropping some files here, or click to select files to upload.</div>
         </Dropzone>
+        <RaisedButton onClick={onFileUpload} label="Import Files" primary={true}/>
+        <div>Files Accepted:
+          <ul>
+            {
+              filesAccepted.map(file =>{
+                return <li>{file.name}<RaisedButton label="Delete" secondary={true} onClick={()=>{onFileDelete(file)}} /></li>
+              }
+            )
+          }
+        </ul>
+      </div>
     </div>
-    );
-};
+  );
+});
 
 const DeleteExpenseDialog = ({
     open,
