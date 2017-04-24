@@ -20,7 +20,7 @@ export default function({
     });
 
     apiRoutes.get('/expenses', function(req, res) {
-        Expense.find({}, (err, data) => {
+        Expense.find({}).sort('-date').exec((err, data) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send(err);
