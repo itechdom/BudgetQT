@@ -125,7 +125,6 @@ export default function({
         });
     });
 
-
     apiRoutes.post('/expenses/upload/csv', function(req, res) {
         if (req.busboy) {
             req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
@@ -134,6 +133,7 @@ export default function({
                         entry
                     });
                     expense.file = filename;
+                    //have a check here to make sure we don't overried already exisitng expenses?
                     let newExpense = new ImportedExpense(expense);
                     newExpense.save((err) => {
                         if (err) {
@@ -149,40 +149,6 @@ export default function({
             req.pipe(req.busboy);
         }
         res.send('You have uploaded the file!');
-    });
-
-    apiRoutes.get('/expenses/:id', function(req, res) {
-        let id = req.params.id;
-        Expense.find({id}, (err, data) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send(err);
-            }
-            res.send(data);
-        });
-    });
-
-    apiRoutes.put('/expenses/:id', function(req, res) {
-        let newExpense = new Expense(req.body);
-        let id = req.params.id;
-        Expense.save(newExpense, (err, data) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send(err);
-            }
-            res.send(data);
-        });
-    });
-
-    apiRoutes.delete('/expenses/:id', function(req, res) {
-        let id = req.params.id;
-        Expense.find({id}).remove().exec((err, data) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send(err);
-            }
-            res.send(data);
-        });
     });
 
     return apiRoutes;

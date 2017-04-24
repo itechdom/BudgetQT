@@ -9,11 +9,9 @@ export class User {
   page = 1;
   itemsPerPage=10;
   originalExpenseList = [];
-  originalImportedExpenseList = [];
   @observable dailyBudget;
   @observable dailyBudgetEditable = false;
   @observable expenseList = [];
-  @observable expenseImportedList = [];
   @observable expenseEditable=false;
   @observable deletedExpense = {};
   @observable editedExpense = {};
@@ -122,66 +120,6 @@ export class User {
     this.expenseList.push(...nextArr);
   }
 
-  @action getImportedExpenses() {
-    this.pendingRequestCount++;
-    let req = superagent.get(`${HOST}/api/v1/expenses/imported`);
-    req.end(action("getImportedExpenses-callback",(err,res)=>{
-      if(err){
-        console.log("err: ",err);
-      }
-      let newExpenses = JSON.parse(res.text);
-      this.originalImportedExpenseList = newExpenses;
-      this.expenseImportedList.push(...newExpenses.slice(0,10));
-    }));
-  }
-
-  @action getImportedExpensesByPage(){
-    this.page++;
-    let currentPage = this.page * this.itemsPerPage;
-    let prevPage = (this.page - 1) * this.itemsPerPage;
-    let nextArr = this.originalImportedExpenseList.slice(prevPage,currentPage);
-    this.expenseImportedList.push(...nextArr);
-  }
-
-  @action deleteImportedExpense(importedExpense) {
-    this.pendingRequestCount++;
-    let req = superagent.delete(`${HOST}/api/v1/expenses/imported`)
-    .send(importedExpense);
-    let removed = this.expenseImportedList.remove(importedExpense);
-    req.end(action("saveImportedExpense-callback", (error, results) => {
-      if (error){
-        console.error(error);
-        //push back the importedList item
-        this.expenseImportedList.push(importedExpense);
-      }
-      else {
-        console.log(results);
-        this.pendingRequestCount--;
-      }
-    }));
-  }
-
-
-  @action saveImportedExpense(importedExpense) {
-    this.pendingRequestCount++;
-    let req = superagent.post(`${HOST}/api/v1/expenses/imported`)
-    .send(importedExpense);
-    let removed = this.expenseImportedList.remove(importedExpense);
-    req.end(action("saveImportedExpense-callback", (error, results) => {
-      if (error){
-        console.error(error);
-        //push back the importedList item
-        this.expenseImportedList.push(importedExpense);
-      }
-      else {
-        //remove imported expense from UI
-        const data = JSON.parse(results.text);
-        //add the imported expense to the expense list
-        this.expenseList.push(data);
-        this.pendingRequestCount--;
-      }
-    }));
-  }
 }
 
 export class Expense {
