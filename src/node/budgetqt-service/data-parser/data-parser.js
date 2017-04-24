@@ -10,14 +10,14 @@ export default function({
         }
         return;
     }).filter(val => val);
-    
+
     let amounts = arr.map(val => {
         if (!isDate(val) && isNumber(val)) {
             return toNumber(val);
         }
         return;
     }).filter(amount => amount);
-    
+
     let tags = arr.map(val => {
         if(!isDate(val) && !isNumber(val)){
             return val;
@@ -27,10 +27,10 @@ export default function({
 
     let expense = {
        date:dates[0],
-       amount:amounts[amounts.length - 1],
+       amount:Math.abs(amounts[amounts.length - 1]),
        tags:tags
     }
-    
+
     return expense;
 }
 

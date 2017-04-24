@@ -69,6 +69,7 @@ import {
 }
 from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
+import Stats from '../Stats';
 
 import DevTools from 'mobx-react-devtools';
 
@@ -496,10 +497,6 @@ const DeleteExpenseDialog = ({
                 {expense.tags?expense.tags.join('-'):"no expense yet"}
             </Dialog>
 };
-
-const Stats = () => (
-    <div>Stats</div>
-);
 
 const Rewards = () => (
     <div>Rewards</div>
