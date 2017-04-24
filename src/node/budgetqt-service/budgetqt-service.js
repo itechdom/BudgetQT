@@ -93,22 +93,24 @@ export default function({
         if (req.busboy) {
             req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
                 file.pipe(csv()).on('data', (entry) => {
+
                     var expense = parser({
                         entry
                     });
-                    
-                    Expense.find({date:expense.date,amount:expense.amount,tags:expense.tags});
 
                     expense.title = filename;
-                    let newExpense = new Expense(expense);
-                    newExpense.save((err) => {
-                        if (err) {
-                            console.log(err);
+
+                    Expense.update(
+                      {date:expense.date,amount:expense.amount,tags:{$in: expense.tags}},
+                      {$setOnInsert: expense},
+                      {upsert: true},
+                      function(err, numAffected) {
+                        if(err){
+                          return res.status(500).send(err);
                         }
-                        else {
-                            console.log("SAVED EXPENSE!");
-                        }
-                    })
+
+                      }
+                    );
                 })
             });
             req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {});
