@@ -37,8 +37,8 @@ const authApi = authService({app,User});
 import helloService from './hello-service/hello-service.js'
 const helloApi = helloService({app,User});
 
-import passportService from './passport-service/passport-service.js'
-const passportApi = passportService({app,User,config});
+// import passportService from './passport-service/passport-service.js'
+// const passportApi = passportService({app,User,config});
 
 import budgetqtService from './budgetqt-service/budgetqt-service.js';
 const budgetqtApi = budgetqtService({app,ImportedExpense,Expense});
@@ -56,7 +56,7 @@ app.use(morgan('dev'));
 
 //app.use('/', authApi);
 app.use('/hello',helloApi);
-app.use('/',passportApi);
+//app.use('/',passportApi);
 app.use('/api/v1',budgetqtApi);
 
 // =================================================================

@@ -1,7 +1,7 @@
 import {observable, computed, autorun, action, reaction} from 'mobx';
 import uuidV4 from 'uuid/v4';
 import superagent from 'superagent';
-const HOST = "http://localhost:8082";
+import {HOST} from  "../.config.js";
 
 export class User {
   name;
