@@ -128,11 +128,11 @@ export class User {
     this.expensePage++;
     let nextArr = this.getNextExpenses(this.expensePage);
     let filteredExpenses = this.filterExpensesByFilter(nextArr,this.selectedFilter);
+    this.expenseList.clear();
     this.expenseList.push(...filteredExpenses);
   }
 
   getNextExpenses(page){
-    //check if there are expesnes left
     let currentPage = this.expensePage * this.itemsPerPage;
     let nextArr = this.originalExpenseList.slice(0,currentPage);
     return nextArr;
