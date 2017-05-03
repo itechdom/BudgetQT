@@ -276,6 +276,7 @@ const Home = ({
             handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
             newExpense={this.props.newExpense}
         />
+        
             <Table
               multiSelectable={true}
               >

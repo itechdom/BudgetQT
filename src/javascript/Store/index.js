@@ -9,6 +9,7 @@ export class User {
   page = 1;
   itemsPerPage=10;
   originalExpenseList = [];
+  filterList = [];
   @observable dailyBudget;
   @observable dailyBudgetEditable = false;
   @observable expenseList = [];
@@ -33,6 +34,10 @@ export class User {
     this.page=1;
     this.expensePage=1;
     this.deletedExpense = {};
+    this.filterList = [
+      'Dining',
+      'Taxes'
+    ]
   }
 
   @computed get filterByDate(){
