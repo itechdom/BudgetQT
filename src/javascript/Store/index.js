@@ -10,6 +10,7 @@ export class User {
   itemsPerPage=10;
   originalExpenseList = [];
   filterList = [];
+  @observable selectedFilter;
   @observable dailyBudget;
   @observable dailyBudgetEditable = false;
   @observable expenseList = [];
@@ -34,7 +35,9 @@ export class User {
     this.page=1;
     this.expensePage=1;
     this.deletedExpense = {};
+    this.selectedFilter = "All";
     this.filterList = [
+      'All',
       'Dining',
       'Taxes'
     ]
@@ -112,12 +115,37 @@ export class User {
     }));
   }
 
+  @action filterExpenses(filter){
+    let nextArr = [];
+    this.expensePage = 1;
+    this.selectedFilter = filter;
+    nextArr = this.filterExpensesByFilter(this.getNextExpenses(1),this.selectedFilter);
+    this.expenseList.clear();
+    return this.expenseList.push(...nextArr);
+  }
+
   @action getExpensesByPage(){
     this.expensePage++;
+    let nextArr = this.getNextExpenses(this.expensePage);
+    let filteredExpenses = this.filterExpensesByFilter(nextArr,this.selectedFilter);
+    this.expenseList.push(...filteredExpenses);
+  }
+
+  getNextExpenses(page){
+    //check if there are expesnes left
     let currentPage = this.expensePage * this.itemsPerPage;
-    let prevPage = (this.expensePage - 1) * this.itemsPerPage;
-    let nextArr = this.originalExpenseList.slice(prevPage,currentPage);
-    this.expenseList.push(...nextArr);
+    let nextArr = this.originalExpenseList.slice(0,currentPage);
+    return nextArr;
+  }
+
+  filterExpensesByFilter(arr,filter){
+    if(filter !== "All"){
+      let nextArr = arr.filter((expense)=>{
+        return expense.tags.indexOf(filter) !== -1;
+      });
+      return nextArr;
+    }
+    return arr;
   }
 
 }
