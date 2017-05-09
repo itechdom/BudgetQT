@@ -69,6 +69,8 @@ import {
 }
 from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 import Stats from '../Stats';
 
 import DevTools from 'mobx-react-devtools';
