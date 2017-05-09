@@ -148,6 +148,8 @@ renderHome() {
         expenseList={this.props.userStore.expenseList}
         filterList={this.props.userStore.filterList}
         onFilter={(filter)=>{this.props.userStore.filterExpenses(filter);}}
+        selectedDate={this.props.userStore.selectedDate}
+        handleDateChange={(month)=>this.props.userStore.filterExpensesByMonth(month)}
         expenseEditable={this.props.userStore.expenseEditable}
         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
         onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
@@ -280,6 +282,9 @@ const Home = ({
         handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
         newExpense={this.props.newExpense}
       />
+      <DropDownMenu>
+        <MenuItem value={1} primaryText="hello" />
+      </DropDownMenu>
       <Tabs>
         {
           this.props.filterList.map((filter)=>{
