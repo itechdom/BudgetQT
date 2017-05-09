@@ -129,7 +129,7 @@ export class User {
   
   @action filterExpensesByMonth(month){
     let nextArr = [];
-    this.selectedDate = new Date(`1/${month}/${new Date().getYear()}`);
+    this.selectedDate = new Date(new Date().getFullYear(),month);
     this.expensePage = 1;
     nextArr = this.filterArrayByMonth(this.getNextExpenses(1),month);
     this.expenseList.clear();
@@ -162,7 +162,7 @@ export class User {
   
   filterArrayByMonth(arr,month){
     let nextArr = arr.filter((expense)=>{
-      return (new Date(expense.date).getMonth()+1) === month;
+      return (new Date(expense.date).getMonth()) === month;
     })
     return nextArr;
   }

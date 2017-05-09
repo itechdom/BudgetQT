@@ -149,6 +149,7 @@ renderHome() {
         filterList={this.props.userStore.filterList}
         onFilter={(filter)=>{this.props.userStore.filterExpenses(filter);}}
         selectedDate={this.props.userStore.selectedDate}
+        monthOptions={this.props.userStore.monthOptions}
         handleDateChange={(month)=>this.props.userStore.filterExpensesByMonth(month)}
         expenseEditable={this.props.userStore.expenseEditable}
         onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
@@ -250,8 +251,14 @@ const Home = ({
     open: false,
     editOpen:false,
     importedExpense:{},
-    editedExpense:{}
+    editedExpense:{},
+    selectedDate:new Date().getMonth()
   };
+  
+  constructor(props){
+    super(props);
+    this.handleDateChange = this.handleDateChange.bind(this);
+  }
 
   handleOpen = () => {
     this.setState({open: true});
@@ -260,6 +267,11 @@ const Home = ({
   handleClose = () => {
     this.setState({open: false});
   };
+  
+  handleDateChange(event,index,value){
+    this.props.handleDateChange(value);
+    this.setState({selectedDate:value})
+  }
 
   render(){
     return <section className="list text-center">
@@ -282,8 +294,18 @@ const Home = ({
         handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
         newExpense={this.props.newExpense}
       />
-      <DropDownMenu>
-        <MenuItem value={1} primaryText="hello" />
+      <DropDownMenu
+        onChange={this.handleDateChange}
+        value={this.state.selectedDate}
+      >
+        {
+          this.props.monthOptions.map((month,index)=>{
+            return <MenuItem 
+              value={index}
+              primaryText={month}
+            />
+          })
+        }
       </DropDownMenu>
       <Tabs>
         {
