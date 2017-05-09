@@ -132,14 +132,6 @@ const styles = {
       editExpenseDialogOpen:false
     }
   }
-
-  /**  <Home
-  dailyBudgetEditable={this.props.userStore.dailyBudgetEditable}
-  dailyBudget={this.props.userStore.dailyBudget}
-  onDailyBudgetChange={(event,newValue)=>this.props.userStore.dailyBudget=newValue}
-  onEditChange={(event)=>this.props.userStore.dailyBudgetEditable = !this.props.userStore.dailyBudgetEditable}
-/>
-**/
 renderHome() {
   if (this.props.userStore.selectedRoute === 0) {
     return <div style={{marginTop:10}}>
@@ -180,8 +172,6 @@ renderHome() {
           this.props.userStore.uploadCSV();
         })}
         onFileDelete={((file)=>{
-          console.log(file,"deleted");
-          console.log(this.props.userStore.filesAccepted);
           this.props.userStore.filesAccepted.remove(file);
         })
       }
@@ -222,29 +212,6 @@ render() {
 }
 };
 
-const Home = ({
-  dailyBudget,
-  dailyBudgetEditable,
-  onEditChange,
-  onDailyBudgetChange
-}) => (
-  <section>
-    <div className="list text-center top-1">
-      <p>
-        Your Daily Budget is: $
-        {dailyBudgetEditable?<TextField onChange={onDailyBudgetChange} type="number" hintText="Enter your daily budget"/>:<span>{dailyBudget}</span>}
-        <FlatButton
-          label="Edit"
-          primary={true}
-          onClick={onEditChange}
-        />
-      </p>
-      <p>{`That's ${4 * dailyBudget} per week`}</p>
-      <p>And ${30 * dailyBudget} per month </p>
-    </div>
-  </section>
-);
-
 @observer class Expenses extends React.Component{
 
   state = {
@@ -275,24 +242,18 @@ const Home = ({
 
   render(){
     return <section className="list text-center">
-      <FormattedDate
+              <FormattedDate
         value={Date.now()}
         year='numeric'
         month='long'
         day='numeric'
         weekday='long'
       />
+    <div className="grid center">
       <RaisedButton
-        label="Download CSV"
+        label="CSV"
         onClick={this.props.onExpenseDownload}
-      />
-      <ExpenseDialog
-        categoryList={this.props.categoryList}
-        open={this.props.expenseEditable}
-        handleOpen={this.props.onExpenseOpen}
-        handleClose={this.props.onExpenseClose}
-        handleSubmit={(event)=>{this.props.newExpense.date = new Date();this.props.expenseList.push(this.props.newExpense);this.props.onExpenseClose()}}
-        newExpense={this.props.newExpense}
+        icon={<FontIcon className="material-icons">file_download</FontIcon>}
       />
       <DropDownMenu
         onChange={this.handleDateChange}
@@ -307,6 +268,8 @@ const Home = ({
           })
         }
       </DropDownMenu>
+    </div>
+
       <Tabs>
         {
           this.props.filterList.map((filter)=>{
@@ -440,50 +403,7 @@ const EditExpenseDialog = observer(({
       </div>
     );
   });
-
-  const ExpenseDialog = ({
-    handleClose,
-    handleOpen,
-    open,
-    handleSubmit,
-    newExpense,
-    categoryList
-  }) => {
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        onClick={handleSubmit}
-      />,
-    ];
-    return (
-      <div>
-        <RaisedButton label="Add Expense" onClick={handleOpen} />
-        <Dialog
-          title="Add Expense"
-          actions={actions}
-          modal={false}
-          open={open}
-          onRequestClose={handleClose}
-          >
-            <TextField onChange={(event,newValue)=>{newExpense.title = newValue}} type="text" required="true" hintText="Expense Title"/>
-            <TextField onChange={(event,newValue)=>{newExpense.amount = newValue}} type="number" required="true" hintText="Expense Amount"/>
-            <AutoComplete
-              hintText="Expense Category"
-              required="true"
-              dataSource={categoryList.map(cat => cat.title)}
-              onNewRequest={(chosenRequest,index)=>newExpense.category = categoryList[index]}
-            />
-          </Dialog>
-        </div>
-      );
-    };
-
+  
     const ImportExpenses = observer(({
       onFileAccepted,
       onFileDelete,
