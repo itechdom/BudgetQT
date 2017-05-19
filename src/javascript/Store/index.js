@@ -49,6 +49,10 @@ export class User {
     );
   }
 
+  @action filterByMonth(index){
+    
+  }
+
   @action uploadCSV() {
     this.pendingRequestCount++;
     let req = superagent.post(`${HOST}/api/v1/expenses/upload/csv`);

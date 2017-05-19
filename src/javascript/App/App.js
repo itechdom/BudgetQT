@@ -53,6 +53,8 @@ import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 import AutoComplete from 'material-ui/AutoComplete';
 import {
   BottomNavigation,
@@ -127,7 +129,8 @@ const styles = {
     super(props);
     this.state = {
       deleteExpenseDialogOpen:false,
-      editExpenseDialogOpen:false
+      editExpenseDialogOpen:false,
+      selectedMonth:0
     }
   }
 
@@ -140,7 +143,15 @@ const styles = {
 **/
 renderHome() {
   if (this.props.userStore.selectedRoute === 0) {
+    let months = ["jan","feb","mar","april","may","june","july","august","september","october","november","december"];
     return <div style={{marginTop:10}}>
+      <DropDownMenu value={this.state.selectedMonth} onChange={(event,index,value)=>{this.setState({selectedMonth:index});console.log(index,value)}}>
+        {
+          months.map((month,index)=>{
+            return <MenuItem value={index} primaryText={month} />
+          })
+        }
+      </DropDownMenu>
       <Expenses
         categoryList={this.props.userStore.categoryList}
         expenseList={this.props.userStore.expenseList}
