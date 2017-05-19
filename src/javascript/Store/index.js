@@ -10,6 +10,9 @@ export class User {
   itemsPerPage=10;
   originalExpenseList = [];
   filterList = [];
+  monthOptions = [
+    "jan","feb","march","april","may","june","july","aug","sept","october","nov","december"
+  ];
   @observable selectedFilter;
   @observable dailyBudget;
   @observable dailyBudgetEditable = false;
@@ -19,7 +22,7 @@ export class User {
   @observable editedExpense = {};
   @observable categoryList=[];
   @observable selectedRoute = 0;
-  @observable selectedDate = Date.now();
+  @observable selectedDate = new Date();
   @observable filesAccepted = [];
   pendingRequestCount = 0;
   constructor(name,email,dailyBudget,dailyBudgetEditable,expenseEditable,categoryList,selectedRoute,selectedDate,filesAccepted) {
@@ -123,7 +126,16 @@ export class User {
     let nextArr = [];
     this.expensePage = 1;
     this.selectedFilter = filter;
-    nextArr = this.filterExpensesByFilter(this.getNextExpenses(1),this.selectedFilter);
+    nextArr = this.filterExpensesByTag(this.getNextExpenses(1),this.selectedFilter);
+    this.expenseList.clear();
+    return this.expenseList.push(...nextArr);
+  }
+  
+  @action filterExpensesByMonth(month){
+    let nextArr = [];
+    this.selectedDate = new Date(new Date().getFullYear(),month);
+    this.expensePage = 1;
+    nextArr = this.filterArrayByMonth(this.getNextExpenses(1),month);
     this.expenseList.clear();
     return this.expenseList.push(...nextArr);
   }
@@ -131,7 +143,7 @@ export class User {
   @action getExpensesByPage(){
     this.expensePage++;
     let nextArr = this.getNextExpenses(this.expensePage);
-    let filteredExpenses = this.filterExpensesByFilter(nextArr,this.selectedFilter);
+    let filteredExpenses = this.filterExpensesByTag(nextArr,this.selectedFilter);
     this.expenseList.clear();
     this.expenseList.push(...filteredExpenses);
   }
@@ -142,7 +154,7 @@ export class User {
     return nextArr;
   }
 
-  filterExpensesByFilter(arr,filter){
+  filterExpensesByTag(arr,filter){
     if(filter !== "All"){
       let nextArr = arr.filter((expense)=>{
         return expense.tags.indexOf(filter) !== -1;
@@ -150,6 +162,13 @@ export class User {
       return nextArr;
     }
     return arr;
+  }
+  
+  filterArrayByMonth(arr,month){
+    let nextArr = arr.filter((expense)=>{
+      return (new Date(expense.date).getMonth()) === month;
+    })
+    return nextArr;
   }
 
 }
