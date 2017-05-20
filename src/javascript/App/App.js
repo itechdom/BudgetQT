@@ -53,8 +53,6 @@ import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem';
 import AutoComplete from 'material-ui/AutoComplete';
 import {
   BottomNavigation,
@@ -137,15 +135,7 @@ const styles = {
   }
 renderHome() {
   if (this.props.userStore.selectedRoute === 0) {
-    let months = ["jan","feb","mar","april","may","june","july","august","september","october","november","december"];
     return <div style={{marginTop:10}}>
-      <DropDownMenu value={this.state.selectedMonth} onChange={(event,index,value)=>{this.setState({selectedMonth:index});console.log(index,value)}}>
-        {
-          months.map((month,index)=>{
-            return <MenuItem value={index} primaryText={month} />
-          })
-        }
-      </DropDownMenu>
       <Expenses
         categoryList={this.props.userStore.categoryList}
         expenseList={this.props.userStore.expenseList}
@@ -232,7 +222,7 @@ render() {
     editedExpense:{},
     selectedDate:new Date().getMonth()
   };
-  
+
   constructor(props){
     super(props);
     this.handleDateChange = this.handleDateChange.bind(this);
@@ -245,7 +235,7 @@ render() {
   handleClose = () => {
     this.setState({open: false});
   };
-  
+
   handleDateChange(event,index,value){
     this.props.handleDateChange(value);
     this.setState({selectedDate:value})
@@ -272,7 +262,7 @@ render() {
       >
         {
           this.props.monthOptions.map((month,index)=>{
-            return <MenuItem 
+            return <MenuItem
               value={index}
               primaryText={month}
             />
@@ -414,7 +404,7 @@ const EditExpenseDialog = observer(({
       </div>
     );
   });
-  
+
     const ImportExpenses = observer(({
       onFileAccepted,
       onFileDelete,
