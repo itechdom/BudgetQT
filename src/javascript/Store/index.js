@@ -13,17 +13,23 @@ export class BudgetQT {
     "jan","feb","march","april","may","june","july","aug","sept","october","nov","december"
   ];
   pendingRequestCount = 0;
+  filterList = [
+    this.filterExpensesByMonth,
+    this.filterExpensesByTag
+  ]
   @observable expenseList = [];
   @observable expenseEditable=false;
   @observable deletedExpense = {};
   @observable editedExpense = {};
-  @observable selectedRoute = 0;
+  @observable route = 0;
   @observable filesAccepted = [];
+  @observable tag = "All";
+  @observable month = (new Date().getMonth());
   constructor(name,email) {
     this.name = name;
     this.email = email;
     this.expenseEditable = false;
-    this.categoryList = [
+    this.tagList = [
       'All',
       'Dining',
       'Taxes'
@@ -40,9 +46,11 @@ export class BudgetQT {
     );
   }
 
-  @computed get filteredExpenses(){
-    console.log(this.page);
-    return 1;
+  @action filterExpenses(){
+    let res = this.filterExpensesByMonth(this.originalExpenseList);
+    let res2 = this.filterExpensesByTag(res);
+    let res3 = this.filterExpensesByPage(res2);
+    this.expenseList = res3;
   }
 
   @action uploadCSV() {
@@ -75,7 +83,7 @@ export class BudgetQT {
       }
       let newExpenses = JSON.parse(res.text);
       this.originalExpenseList = newExpenses;
-      this.expenseList.push(...newExpenses.slice(0,10));
+      this.expenseList.push(...newExpenses);
     }));
   }
 
@@ -111,23 +119,23 @@ export class BudgetQT {
     }));
   }
 
-  @action getExpensesByPage(expenses,page){
-    let currentPage = page * this.itemsPerPage;
+  @action filterExpensesByPage(expenses){
+    let currentPage = this.page * this.itemsPerPage;
     return expenses.slice(0,currentPage);
   }
 
-  @action filterExpensesByTag(expenses,filter){
-    if(filter !== "All"){
+  @action filterExpensesByTag(expenses){
+    if(this.tag !== "All"){
       return expenses.filter((expense)=>{
-        return expense.tags.indexOf(filter) !== -1;
+        return expense.tags.indexOf(this.tag) !== -1;
       });
     }
     return expenses;
   }
 
-  @action filterExpensesByMonth(expenses,month){
+  @action filterExpensesByMonth(expenses){
     return expenses.filter((expense)=>{
-      return (new Date(expense.date).getMonth()) === month;
+      return (new Date(expense.date).getMonth()) === this.month;
     })
   }
 

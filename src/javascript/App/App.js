@@ -4,7 +4,6 @@ import {
   observer
 }
 from "mobx-react";
-import Dropzone from 'react-dropzone';
 import {
   BudgetQT,
   Expense,
@@ -72,6 +71,7 @@ import Paper from 'material-ui/Paper';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Stats from '../Stats';
+import ImportExpenses from '../Expenses/ImportExpenses.js';
 
 import DevTools from 'mobx-react-devtools';
 
@@ -85,7 +85,7 @@ injectTapEventPlugin();
 const muiTheme = getMuiTheme({
   fontFamily: 'Roboto,sans-serif',
   palette: {
-    primary1Color: colors.grey900,
+    primary1Color: colors.blue500,
     primary2Color: colors.teal500,
     primary3Color: colors.grey400,
     accent1Color: colors.pinkA200,
@@ -133,35 +133,54 @@ const styles = {
       selectedMonth:0
     }
   }
-renderHome() {
-  if (this.props.store.selectedRoute === 0) {
-    return <div style={{marginTop:10}}>
-      <Expenses
-        categoryList={this.props.store.categoryList}
-        expenseList={this.props.store.expenseList}
-        categoryList={this.props.store.categoryList}
-        onFilter={(filter)=>{this.props.store.filterExpenses(filter);}}
-        monthOptions={this.props.store.monthOptions}
-        handleDateChange={(month)=>this.props.store.filterExpensesByMonth(month)}
-        expenseEditable={this.props.store.expenseEditable}
-        onExpenseOpen={(event)=>this.props.store.expenseEditable=true}
-        onExpenseClose={(event)=>this.props.store.expenseEditable=false}
-        onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.store.deleteExpense(expense);}}
-        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.store.updateExpense(expense)}}
-        onExpenseDownload = {()=>{this.props.store.exportExpensesCSV()}}
-        newExpense={new Expense()}
-        totalExpenses={this.props.store.totalExpenses}
-        onNextPage={(event)=>{
-          this.props.store.getExpensesByPage();
-        }}
-      />
-      <DeleteExpenseDialog
-        open={this.state.deleteExpenseDialogOpen}
-        onAgree={()=>{this.props.store.deleteExpense();this.setState({deleteExpenseDialogOpen:false})}}
-        onCancel={()=>this.setState({deleteExpenseDialogOpen:false})}
-        expense={this.props.store.deletedExpense}
-      />
-      <ImportExpenses
+  renderHome() {
+    if (this.props.store.route === 0) {
+      return <div style={{marginTop:10}}>
+        <Expenses
+          expenseList={this.props.store.expenseList}
+          tagList={this.props.store.tagList}
+          onTagChange={(tag)=>{this.props.store.tag=tag;this.props.store.filterExpenses();}}
+          page={this.props.store.page}
+          onFilter={(filter)=>{this.props.store.filterExpenses();}}
+          monthOptions={this.props.store.monthOptions}
+          handleDateChange={(month)=>{this.props.store.month = month;this.props.store.filterExpenses();}}
+          expenseEditable={this.props.store.expenseEditable}
+          onExpenseOpen={(event)=>this.props.store.expenseEditable=true}
+          onExpenseClose={(event)=>this.props.store.expenseEditable=false}
+          onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.store.deleteExpense(expense);}}
+          onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.store.updateExpense(expense)}}
+          onExpenseDownload = {()=>{this.props.store.exportExpensesCSV()}}
+          newExpense={new Expense()}
+          totalExpenses={this.props.store.totalExpenses}
+          onNextPage={(event)=>{
+            this.props.store.page++;
+            this.props.store.filterExpenses();
+          }}
+          onPrevPage={(event)=>{
+            this.props.store.page--;
+            this.props.store.filterExpenses();
+          }}
+        />
+        <DeleteExpenseDialog
+          open={this.state.deleteExpenseDialogOpen}
+          onAgree={()=>{this.props.store.deleteExpense();this.setState({deleteExpenseDialogOpen:false})}}
+          onCancel={()=>this.setState({deleteExpenseDialogOpen:false})}
+          expense={this.props.store.deletedExpense}
+        />
+
+      </div>
+    }
+  }
+
+  renderStats(){
+    if(this.props.store.route === 1){
+      return <Stats />
+    }
+  }
+
+  renderImport(){
+    if(this.props.store.route === 2){
+      return <ImportExpenses
         filesAccepted = {this.props.store.filesAccepted}
         onFileAccepted={((acceptedFiles)=>{
           this.props.store.filesAccepted.push(
@@ -176,13 +195,6 @@ renderHome() {
         })
       }
     />
-  </div>
-}
-}
-
-renderStats(){
-  if(this.props.store.route === 1){
-    return <Stats />
   }
 }
 
@@ -204,6 +216,7 @@ render() {
         />
         {this.renderHome()}
         {this.renderStats()}
+        {this.renderImport()}
         <DevTools />
         <Footer/>
       </div>
@@ -242,193 +255,174 @@ render() {
 
   render(){
     return <section className="list text-center">
-              <FormattedDate
+      <FormattedDate
         value={Date.now()}
         year='numeric'
         month='long'
         day='numeric'
         weekday='long'
       />
-    <div className="grid center">
-      <RaisedButton
-        label="CSV"
-        onClick={this.props.onExpenseDownload}
-        icon={<FontIcon className="material-icons">file_download</FontIcon>}
-      />
-      <DropDownMenu
-        onChange={this.handleDateChange}
-        value={this.state.selectedDate}
-      >
-        {
-          this.props.monthOptions.map((month,index)=>{
-            return <MenuItem
-              value={index}
-              primaryText={month}
-            />
-          })
-        }
-      </DropDownMenu>
-    </div>
+      <div className="grid center">
+        <RaisedButton
+          label="CSV"
+          onClick={this.props.onExpenseDownload}
+          icon={<FontIcon className="material-icons">file_download</FontIcon>}
+        />
+        <RaisedButton
+          label={`<`}
+          onClick={this.props.onPrevPage}
+        />
+        {this.props.page}
+        <RaisedButton
+          label={`>`}
+          onClick={this.props.onNextPage}
+        />
+        <DropDownMenu
+          onChange={this.handleDateChange}
+          value={this.state.selectedDate}
+          >
 
-      <Tabs>
-        {
-          this.props.categoryList.map((filter)=>{
-            return <Tab
-              label={filter}
-              onClick={(event)=>{this.props.onFilter(filter)}}
-            />
-          })
-        }
-      </Tabs>
-      <Table
-        multiSelectable={true}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHeaderColumn>Date</TableHeaderColumn>
-              <TableHeaderColumn>Amount</TableHeaderColumn>
-              <TableHeaderColumn>Title</TableHeaderColumn>
-              <TableHeaderColumn>Tags</TableHeaderColumn>
-              <TableHeaderColumn>Edit?</TableHeaderColumn>
-              <TableHeaderColumn>Delete?</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody
-            className="top-1"
-            stripedRows={true}
-            >
-              {
-                this.props.expenseList.map((expense,index) => (
-                  <TableRow onMouseDown={()=>console.log("clicked")}>
-                    <TableRowColumn>
-                      <FormattedDate
-                        value={expense.date}
-                        year='numeric'
-                        month='long'
-                        day='numeric'
+            {
+              this.props.monthOptions.map((month,index)=>{
+                return <MenuItem
+                  value={index}
+                  primaryText={month}
+                />
+              })
+            }
+          </DropDownMenu>
+        </div>
+
+        <Tabs>
+          {
+            this.props.tagList.map((filter)=>{
+              return <Tab
+                label={filter}
+                onClick={(event)=>{this.props.onTagChange(filter)}}
+              />
+            })
+          }
+        </Tabs>
+        <Table
+          height={'500px'}
+          multiSelectable={true}
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHeaderColumn>Date</TableHeaderColumn>
+                <TableHeaderColumn>Amount</TableHeaderColumn>
+                <TableHeaderColumn>Title</TableHeaderColumn>
+                <TableHeaderColumn>Tags</TableHeaderColumn>
+                <TableHeaderColumn>Edit?</TableHeaderColumn>
+                <TableHeaderColumn>Delete?</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody
+              className="top-1"
+              stripedRows={true}
+              >
+                {
+                  this.props.expenseList.map((expense,index) => (
+                    <TableRow onMouseDown={()=>console.log("clicked")}>
+                      <TableRowColumn>
+                        <FormattedDate
+                          value={expense.date}
+                          year='numeric'
+                          month='long'
+                          day='numeric'
+                        />
+                      </TableRowColumn>
+                      <TableRowColumn>{expense.amount}</TableRowColumn>
+                      <TableRowColumn>{expense.title}</TableRowColumn>
+                      <TableRowColumn>{expense.tags.map(tag=><Chip >{tag}</Chip>)}</TableRowColumn>
+                      <TableRowColumn>
+                        <RaisedButton
+                          label={"edit"}
+                          primary={true}
+                          onClick={(event)=>{
+                            this.setState({editOpen:true});
+                            this.setState({editedExpense:expense});
+                          }
+                        }
                       />
                     </TableRowColumn>
-                    <TableRowColumn>{expense.amount}</TableRowColumn>
-                    <TableRowColumn>{expense.title}</TableRowColumn>
-                    <TableRowColumn>{expense.tags.map(tag=><Chip >{tag}</Chip>)}</TableRowColumn>
                     <TableRowColumn>
                       <RaisedButton
-                        label={"edit"}
-                        primary={true}
+                        label={"delete"}
+                        secondary={true}
                         onClick={(event)=>{
-                          this.setState({editOpen:true});
-                          this.setState({editedExpense:expense});
+                          this.setState({open:true});
+                          this.setState({importedExpense:expense});
                         }
                       }
                     />
                   </TableRowColumn>
-                  <TableRowColumn>
-                    <RaisedButton
-                      label={"delete"}
-                      secondary={true}
-                      onClick={(event)=>{
-                        this.setState({open:true});
-                        this.setState({importedExpense:expense});
-                      }
-                    }
-                  />
-                </TableRowColumn>
-              </TableRow>
-            ))
-          }
-        </TableBody>
-      </Table>
-      <RaisedButton
-        label={`load more ...`}
-        onClick={this.props.onNextPage}
-      />
-      <EditExpenseDialog
-        open={this.state.editOpen}
-        handleSubmit={(event)=>{this.setState({editOpen:false});this.props.onExpenseEdit(this.state.editedExpense)}}
-        handleClose={(event)=>{this.setState({editOpen:false})}}
-        handleTagAdd={(expense,tag)=>{expense.tags.push(tag)}}
-        expense={this.state.editedExpense}
-      />
-      <DeleteExpenseDialog
-        open={this.state.open}
-        onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
-        onCancel={()=>this.setState({open:false})}
-        expense={this.state.importedExpense}
-      />
-    </section>
-  }
-}
-
-const EditExpenseDialog = observer(({
-  handleClose,
-  open,
-  handleSubmit,
-  handleTagAdd,
-  expense
-}) => {
-  const actions = [
-    <FlatButton
-      label="Cancel"
-      primary={true}
-      onClick={handleClose}
-    />,
-    <FlatButton
-      label="Submit"
-      primary={true}
-      onClick={handleSubmit}
-    />,
-  ];
-  return (
-    <div>
-      <Dialog
-        title="Edit Expense"
-        actions={actions}
-        modal={false}
-        open={open}
-        onRequestClose={handleClose}
-        >
-          <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title" defaultValue={expense.title}/>
-          <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount" defaultValue={expense.amount}/>
-          {
-            expense.tags?expense.tags.map(tag => {
-              return <TextField onChange={(event,newValue)=>{expense.tags[expense.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
-            }):<div>No Expense</div>
-          }
-          <FlatButton
-            label="Add Tag"
-            primary={true}
-            onClick={(event)=>{handleTagAdd(expense,"")}}
-          />
-        </Dialog>
-      </div>
-    );
-  });
-
-    const ImportExpenses = observer(({
-      onFileAccepted,
-      onFileDelete,
-      onFileUpload,
-      filesAccepted
-    }) => {
-      return (
-        <div>
-          <Dropzone onDrop={((acceptedFiles,rejectedFiles)=>onFileAccepted(acceptedFiles))}>
-            <div>Try dropping some files here, or click to select files to upload.</div>
-          </Dropzone>
-          <RaisedButton onClick={onFileUpload} label="Import Files" primary={true}/>
-          <div>Files Accepted:
-            <ul>
-              {
-                filesAccepted.map(file =>{
-                  return <li>{file.name}<RaisedButton label="Delete" secondary={true} onClick={()=>{onFileDelete(file)}} /></li>
-                }
-              )
+                </TableRow>
+              ))
             }
-          </ul>
+          </TableBody>
+        </Table>
+        <EditExpenseDialog
+          open={this.state.editOpen}
+          handleSubmit={(event)=>{this.setState({editOpen:false});this.props.onExpenseEdit(this.state.editedExpense)}}
+          handleClose={(event)=>{this.setState({editOpen:false})}}
+          handleTagAdd={(expense,tag)=>{expense.tags.push(tag)}}
+          expense={this.state.editedExpense}
+        />
+        <DeleteExpenseDialog
+          open={this.state.open}
+          onAgree={()=>{this.props.onExpenseDelete(this.state.importedExpense);this.setState({open:false})}}
+          onCancel={()=>this.setState({open:false})}
+          expense={this.state.importedExpense}
+        />
+      </section>
+    }
+  }
+
+  const EditExpenseDialog = observer(({
+    handleClose,
+    open,
+    handleSubmit,
+    handleTagAdd,
+    expense
+  }) => {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={handleSubmit}
+      />,
+    ];
+    return (
+      <div>
+        <Dialog
+          title="Edit Expense"
+          actions={actions}
+          modal={false}
+          open={open}
+          onRequestClose={handleClose}
+          >
+            <TextField onChange={(event,newValue)=>{expense.title = newValue}} type="text" required="true" hintText="Expense Title" defaultValue={expense.title}/>
+            <TextField onChange={(event,newValue)=>{expense.amount = newValue}} type="number" required="true" hintText="Expense Amount" defaultValue={expense.amount}/>
+            {
+              expense.tags?expense.tags.map(tag => {
+                return <TextField onChange={(event,newValue)=>{expense.tags[expense.tags.indexOf(tag)] = newValue}} type="text" required="true" hintText="Expense Tags" defaultValue={tag}/>
+              }):<div>No Expense</div>
+            }
+            <FlatButton
+              label="Add Tag"
+              primary={true}
+              onClick={(event)=>{handleTagAdd(expense,"")}}
+            />
+          </Dialog>
         </div>
-      </div>
-    );
-  });
+      );
+    });
 
   const DeleteExpenseDialog = ({
     open,
@@ -495,7 +489,7 @@ const EditExpenseDialog = observer(({
             />
             <BottomNavigationItem
               icon={<FontIcon className="material-icons">info</FontIcon>}
-              label="Rewards"
+              label="Import"
               data-route="/progress"
               onTouchTap={() => changeRoute(2)}
             />
