@@ -101,9 +101,6 @@ const muiTheme = getMuiTheme({
   },
   appBar: {
     height: 'auto'
-  },
-  tabs: {
-    backgroundColor: colors.grey700
   }
 });
 
