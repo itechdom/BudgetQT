@@ -6,7 +6,7 @@ import {
 from "mobx-react";
 import Dropzone from 'react-dropzone';
 import {
-  User,
+  BudgetQT,
   Expense,
   Category
 }
@@ -134,46 +134,45 @@ const styles = {
     }
   }
 renderHome() {
-  if (this.props.userStore.selectedRoute === 0) {
+  if (this.props.store.selectedRoute === 0) {
     return <div style={{marginTop:10}}>
       <Expenses
-        categoryList={this.props.userStore.categoryList}
-        expenseList={this.props.userStore.expenseList}
-        filterList={this.props.userStore.filterList}
-        onFilter={(filter)=>{this.props.userStore.filterExpenses(filter);}}
-        selectedDate={this.props.userStore.selectedDate}
-        monthOptions={this.props.userStore.monthOptions}
-        handleDateChange={(month)=>this.props.userStore.filterExpensesByMonth(month)}
-        expenseEditable={this.props.userStore.expenseEditable}
-        onExpenseOpen={(event)=>this.props.userStore.expenseEditable=true}
-        onExpenseClose={(event)=>this.props.userStore.expenseEditable=false}
-        onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.userStore.deleteExpense(expense);}}
-        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.userStore.updateExpense(expense)}}
-        onExpenseDownload = {()=>{this.props.userStore.exportExpensesCSV()}}
+        categoryList={this.props.store.categoryList}
+        expenseList={this.props.store.expenseList}
+        categoryList={this.props.store.categoryList}
+        onFilter={(filter)=>{this.props.store.filterExpenses(filter);}}
+        monthOptions={this.props.store.monthOptions}
+        handleDateChange={(month)=>this.props.store.filterExpensesByMonth(month)}
+        expenseEditable={this.props.store.expenseEditable}
+        onExpenseOpen={(event)=>this.props.store.expenseEditable=true}
+        onExpenseClose={(event)=>this.props.store.expenseEditable=false}
+        onExpenseDelete={(expense)=>{console.log("EXPENSE:",expense);this.props.store.deleteExpense(expense);}}
+        onExpenseEdit = {(expense)=>{console.log("EXPENSE EDITED:",expense);this.props.store.updateExpense(expense)}}
+        onExpenseDownload = {()=>{this.props.store.exportExpensesCSV()}}
         newExpense={new Expense()}
-        totalExpenses={this.props.userStore.totalExpenses}
+        totalExpenses={this.props.store.totalExpenses}
         onNextPage={(event)=>{
-          this.props.userStore.getExpensesByPage();
+          this.props.store.getExpensesByPage();
         }}
       />
       <DeleteExpenseDialog
         open={this.state.deleteExpenseDialogOpen}
-        onAgree={()=>{this.props.userStore.deleteExpense();this.setState({deleteExpenseDialogOpen:false})}}
+        onAgree={()=>{this.props.store.deleteExpense();this.setState({deleteExpenseDialogOpen:false})}}
         onCancel={()=>this.setState({deleteExpenseDialogOpen:false})}
-        expense={this.props.userStore.deletedExpense}
+        expense={this.props.store.deletedExpense}
       />
       <ImportExpenses
-        filesAccepted = {this.props.userStore.filesAccepted}
+        filesAccepted = {this.props.store.filesAccepted}
         onFileAccepted={((acceptedFiles)=>{
-          this.props.userStore.filesAccepted.push(
+          this.props.store.filesAccepted.push(
             acceptedFiles[acceptedFiles.length - 1]
           );
         })}
         onFileUpload={(()=>{
-          this.props.userStore.uploadCSV();
+          this.props.store.uploadCSV();
         })}
         onFileDelete={((file)=>{
-          this.props.userStore.filesAccepted.remove(file);
+          this.props.store.filesAccepted.remove(file);
         })
       }
     />
@@ -182,7 +181,7 @@ renderHome() {
 }
 
 renderStats(){
-  if(this.props.userStore.selectedRoute === 1){
+  if(this.props.store.route === 1){
     return <Stats />
   }
 }
@@ -196,12 +195,12 @@ render() {
           style={{textAlign:"center"}}
           title={
             <div style={styles.title}><h1 className="title">BudgetQT</h1>
-            <h2>Welcome {this.props.userStore.name}!</h2>
+            <h2>Welcome {this.props.store.name}!</h2>
           </div>}
         />
         <Menu
-          selectedRoute={this.props.userStore.selectedRoute}
-          changeRoute={(index)=>this.props.userStore.selectedRoute = index}
+          selectedRoute={this.props.store.route}
+          changeRoute={(index)=>this.props.store.route = index}
         />
         {this.renderHome()}
         {this.renderStats()}
@@ -273,7 +272,7 @@ render() {
 
       <Tabs>
         {
-          this.props.filterList.map((filter)=>{
+          this.props.categoryList.map((filter)=>{
             return <Tab
               label={filter}
               onClick={(event)=>{this.props.onFilter(filter)}}
@@ -511,34 +510,12 @@ const EditExpenseDialog = observer(({
       );
 
 
-      //====================
-      //-------------------
-      // POPULATE STORE WITH INITIAL DATA
-      //-------------------
-      //===================
-
-      let categoryList = [
-        [new Category("gas", "gas")],
-        [new Category("coffee", "coffee")],
-        [new Category("groceries", "cart")],
-        [new Category("food", "food")],
-        [new Category("friends and family", "gift")],
-        [new Category("dog", "dog")],
-        [new Category("donation", "donation")],
-        [new Category("medical", "ambulance")],
-        [new Category("electronics", "electronic")],
-        [new Category("online subscriptions", "electronic")],
-        [new Category("utilities", "phone")],
-        [new Category("vacation and travel", "beach")],
-        [new Category("office supplies", "office")]
-      ];
-
-      let userStore = new User("Sam", "osamah.net.m@gmail.com", 13, false, false, categoryList, 0, Date.now(), []);
-      userStore.getExpenses();
+      let BudgetQTStore = new BudgetQT("Sam", "osamah.net.m@gmail.com");
+      BudgetQTStore.getExpenses();
 
       ReactDOM.render(
         <IntlProvider locale="en">
-          <App userStore={userStore} />
+          <App store={BudgetQTStore} />
         </IntlProvider>,
         document.getElementById('app')
       );

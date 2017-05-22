@@ -3,47 +3,35 @@ import uuidV4 from 'uuid/v4';
 import superagent from 'superagent';
 import {HOST} from  "../.config.js";
 
-export class User {
+export class BudgetQT {
   name;
   email;
   page = 1;
   itemsPerPage=10;
   originalExpenseList = [];
-  filterList = [];
   monthOptions = [
     "jan","feb","march","april","may","june","july","aug","sept","october","nov","december"
   ];
-  @observable selectedFilter;
-  @observable dailyBudget;
-  @observable dailyBudgetEditable = false;
+  pendingRequestCount = 0;
   @observable expenseList = [];
   @observable expenseEditable=false;
   @observable deletedExpense = {};
   @observable editedExpense = {};
-  @observable categoryList=[];
   @observable selectedRoute = 0;
-  @observable selectedDate = new Date();
   @observable filesAccepted = [];
-  pendingRequestCount = 0;
-  constructor(name,email,dailyBudget,dailyBudgetEditable,expenseEditable,categoryList,selectedRoute,selectedDate,filesAccepted) {
+  constructor(name,email) {
     this.name = name;
     this.email = email;
-    this.dailyBudget = dailyBudget;
-    this.dailyBudgetEditable = dailyBudgetEditable;
-    this.expenseEditable = expenseEditable;
-    this.categoryList = categoryList;
-    this.selectedRoute = selectedRoute;
-    this.selectedDate = selectedDate;
-    this.filesAccepted = filesAccepted;
-    this.page=1;
-    this.expensePage=1;
-    this.deletedExpense = {};
-    this.selectedFilter = "All";
-    this.filterList = [
+    this.expenseEditable = false;
+    this.categoryList = [
       'All',
       'Dining',
       'Taxes'
-    ]
+    ];
+    this.route = 0;
+    this.filesAccepted = [];
+    this.page=1;
+    this.deletedExpense = {};
   }
 
   @computed get filterByDate(){
@@ -52,8 +40,9 @@ export class User {
     );
   }
 
-  @action filterByMonth(index){
-    
+  @computed get filteredExpenses(){
+    console.log(this.page);
+    return 1;
   }
 
   @action uploadCSV() {
@@ -122,53 +111,24 @@ export class User {
     }));
   }
 
-  @action filterExpenses(filter){
-    let nextArr = [];
-    this.expensePage = 1;
-    this.selectedFilter = filter;
-    nextArr = this.filterExpensesByTag(this.getNextExpenses(1),this.selectedFilter);
-    this.expenseList.clear();
-    return this.expenseList.push(...nextArr);
-  }
-  
-  @action filterExpensesByMonth(month){
-    let nextArr = [];
-    this.selectedDate = new Date(new Date().getFullYear(),month);
-    this.expensePage = 1;
-    nextArr = this.filterArrayByMonth(this.getNextExpenses(1),month);
-    this.expenseList.clear();
-    return this.expenseList.push(...nextArr);
+  @action getExpensesByPage(expenses,page){
+    let currentPage = page * this.itemsPerPage;
+    return expenses.slice(0,currentPage);
   }
 
-  @action getExpensesByPage(){
-    this.expensePage++;
-    let nextArr = this.getNextExpenses(this.expensePage);
-    let filteredExpenses = this.filterExpensesByTag(nextArr,this.selectedFilter);
-    this.expenseList.clear();
-    this.expenseList.push(...filteredExpenses);
-  }
-
-  getNextExpenses(page){
-    let currentPage = this.expensePage * this.itemsPerPage;
-    let nextArr = this.originalExpenseList.slice(0,currentPage);
-    return nextArr;
-  }
-
-  filterExpensesByTag(arr,filter){
+  @action filterExpensesByTag(expenses,filter){
     if(filter !== "All"){
-      let nextArr = arr.filter((expense)=>{
+      return expenses.filter((expense)=>{
         return expense.tags.indexOf(filter) !== -1;
       });
-      return nextArr;
     }
-    return arr;
+    return expenses;
   }
-  
-  filterArrayByMonth(arr,month){
-    let nextArr = arr.filter((expense)=>{
+
+  @action filterExpensesByMonth(expenses,month){
+    return expenses.filter((expense)=>{
       return (new Date(expense.date).getMonth()) === month;
     })
-    return nextArr;
   }
 
 }
