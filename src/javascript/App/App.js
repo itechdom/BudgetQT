@@ -135,6 +135,7 @@ const styles = {
       return <div style={{marginTop:10}}>
         <Expenses
           expenseList={this.props.store.expenseList}
+          total={this.props.store.total}
           tagList={this.props.store.tagList}
           onTagChange={(tag)=>{this.props.store.tag=tag;this.props.store.filterExpenses();}}
           page={this.props.store.page}
@@ -260,6 +261,7 @@ render() {
         weekday='long'
       />
       <div className="grid center">
+        {this.props.total}
         <RaisedButton
           label="CSV"
           onClick={this.props.onExpenseDownload}

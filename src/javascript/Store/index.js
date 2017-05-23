@@ -46,6 +46,14 @@ export class BudgetQT {
     );
   }
 
+  @computed get total(){
+    let tempExp = this.expenseList.slice();
+    if(tempExp.length > 0){
+      return tempExp.map(exp => exp.amount).reduce((prev,curr)=> prev + curr);
+    }
+    return 0;
+  }
+
   @action filterExpenses(){
     let res = this.filterExpensesByMonth(this.originalExpenseList);
     let res2 = this.filterExpensesByTag(res);
