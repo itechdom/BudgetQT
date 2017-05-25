@@ -2,6 +2,7 @@ import {observable, computed, autorun, action, reaction} from 'mobx';
 import uuidV4 from 'uuid/v4';
 import superagent from 'superagent';
 import {HOST} from  "../.config.js";
+import R from 'ramda';
 
 export class BudgetQT {
   name;
@@ -55,9 +56,9 @@ export class BudgetQT {
   }
 
   @action filterExpenses(){
-    let res = this.filterExpensesByMonth(this.originalExpenseList);
-    let res2 = this.filterExpensesByTag(res);
-    let res3 = this.filterExpensesByPage(res2);
+    let res = this.filterExpensesByPage(this.originalExpenseList);
+    let filter = R.compose(R.filter(this.filterExpensesByMonth),R.filter(this.filterExpensesByTag));
+    console.log(filter(res));
     this.expenseList = res3;
   }
 
@@ -132,19 +133,15 @@ export class BudgetQT {
     return expenses.slice(0,currentPage);
   }
 
-  @action filterExpensesByTag(expenses){
+  @action filterExpensesByTag(expense){
     if(this.tag !== "All"){
-      return expenses.filter((expense)=>{
         return expense.tags.indexOf(this.tag) !== -1;
-      });
     }
-    return expenses;
+    return expense;
   }
 
-  @action filterExpensesByMonth(expenses){
-    return expenses.filter((expense)=>{
+  @action filterExpensesByMonth(expense){
       return (new Date(expense.date).getMonth()) === this.month;
-    })
   }
 
 }
