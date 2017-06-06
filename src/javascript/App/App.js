@@ -481,13 +481,13 @@ render() {
               onTouchTap={() => changeRoute(0)}
             />
             <BottomNavigationItem
-              icon={<FontIcon className="material-icons">favorite</FontIcon>}
+              icon={<FontIcon className="material-icons">trending_up</FontIcon>}
               label="Stats"
               data-route="/portfolio"
               onTouchTap={() => changeRoute(1)}
             />
             <BottomNavigationItem
-              icon={<FontIcon className="material-icons">info</FontIcon>}
+              icon={<FontIcon className="material-icons">backup</FontIcon>}
               label="Import"
               data-route="/progress"
               onTouchTap={() => changeRoute(2)}
