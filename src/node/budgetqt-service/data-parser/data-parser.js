@@ -25,9 +25,13 @@ export default function({
         return;
     }).filter(val => val);
 
+    let absoluteAmount = Math.abs(amounts[amounts.length - 1]);
+    if(isNaN(absoluteAmount)){
+      absoluteAmount = 0;
+    }
     let expense = {
        date:dates[0],
-       amount:Math.abs(amounts[amounts.length - 1]),
+       amount:absoluteAmount,
        tags:tags
     }
 
